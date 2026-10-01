@@ -8,18 +8,23 @@ name: Error and retry
       LOCATION: deny
 - tapOn: 'Settings'
 - scrollUntilVisible:
-    element: 'Simulate an API failure'
+    element:
+      id: 'simulate-api-failure'
     direction: DOWN
-- tapOn: 'Simulate an API failure'
+- tapOn:
+    id: 'simulate-api-failure'
 - tapOn: 'Close'
 - tapOn: 'Search a store'
 - inputText: 'Rambert'
+- hideKeyboard
 - assertVisible: 'Couldn’t load the stores'
 - tapOn: 'Settings'
 - scrollUntilVisible:
-    element: 'Simulate an API failure'
+    element:
+      id: 'simulate-api-failure'
     direction: DOWN
-- tapOn: 'Simulate an API failure'
+- tapOn:
+    id: 'simulate-api-failure'
 - tapOn: 'Close'
 - tapOn: 'Try again'
 - assertVisible: 'Rambert Annecy, .*'

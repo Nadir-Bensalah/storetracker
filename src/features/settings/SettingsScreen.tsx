@@ -116,6 +116,7 @@ export function SettingsScreen() {
                   setApiFailing(failing);
                 }}
                 accessibilityLabel={t('settings.simulateFailure')}
+                testID="simulate-api-failure"
               />
             </View>
             <ListRow

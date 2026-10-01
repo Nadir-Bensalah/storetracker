@@ -63,7 +63,8 @@ export function StoresScreen() {
     [debouncedSearch, sort, origin],
   );
   const {
-    data,
+    data: lastData,
+    currentData,
     error,
     isLoading,
     isFetching,
@@ -75,6 +76,9 @@ export function StoresScreen() {
   } = useGetStoresInfiniteQuery(query);
   const nearby = useGetNearbyStoresQuery(origin ?? skipToken);
 
+  // While a new search loads, the previous results stay on screen (`data`);
+  // if that search fails, they must not pass for its results.
+  const data = currentData ?? (isError ? undefined : lastData);
   const stores = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
   const total = data?.pages[0]?.total;
 
@@ -148,7 +152,7 @@ export function StoresScreen() {
   ) : null;
 
   let empty: React.ReactElement | null = null;
-  if (isLoading) {
+  if (isLoading || (isFetching && !data)) {
     empty = (
       <SkeletonGroup label={t('common.loading')}>
         {Array.from({ length: 6 }, (_, index) => (

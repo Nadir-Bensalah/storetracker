@@ -1,5 +1,5 @@
-# Without location the list is alphabetical: Hollier stores only arrive with
-# the third page of 20, so reaching one proves infinite scroll works.
+# 120 stores in pages of 20: the end-of-list message only appears once every
+# page has been loaded by scrolling.
 appId: app.capmedia.storetracker
 name: Pagination
 ---
@@ -8,8 +8,9 @@ name: Pagination
     env:
       LOCATION: deny
 - assertVisible: '120 stores'
-- assertNotVisible: 'Hollier Bercy, .*'
+- assertNotVisible: 'You’ve seen them all.'
 - scrollUntilVisible:
-    element: 'Hollier Bercy, .*'
+    element: 'You’ve seen them all.'
     direction: DOWN
-    timeout: 30000
+    timeout: 90000
+    speed: 80

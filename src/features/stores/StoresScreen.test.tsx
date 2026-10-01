@@ -56,6 +56,17 @@ describe('StoresScreen', () => {
     expect(await screen.findByText('Fauvel Abbesses')).toBeOnTheScreen();
   });
 
+  it('does not pass the previous results off as those of a search that failed', async () => {
+    await renderWithStore(<StoresScreen />);
+    await screen.findByText('Fauvel Abbesses');
+
+    mockServerConfig.errorRate = 1;
+    await fireEvent.changeText(screen.getByLabelText('Rechercher un magasin'), 'Rambert');
+
+    expect(await screen.findByText('Impossible de charger les magasins')).toBeOnTheScreen();
+    expect(screen.queryByText('Fauvel Abbesses')).toBeNull();
+  });
+
   it('opens the detail of the pressed store', async () => {
     await renderWithStore(<StoresScreen />);
     await fireEvent.press(await screen.findByRole('button', { name: /^Fauvel Abbesses/ }));
