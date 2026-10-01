@@ -34,7 +34,7 @@ import { Text } from '@/ui/Text';
 import { useStretchyHeader } from '@/ui/useStretchyHeader';
 
 import { useGetStoreQuery } from './api/storesApi';
-import { photos } from './data/photos';
+import { knownPhotos, photos } from './data/photos';
 import { directionsUrl } from './directions';
 import { distanceInMeters } from './distance';
 import { OpeningHoursRow } from './OpeningHoursRow';
@@ -133,6 +133,7 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
   const statusLabel = useOpeningStatusLabel();
   const origin = useAppSelector((state) => state.location.coordinates);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const gallery = knownPhotos(store.photos);
 
   const status = statusLabel(store, now);
   const distance = origin
@@ -160,7 +161,7 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
         <View style={{ height: photoHeight }}>
           <Animated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
             <FlatList
-              data={store.photos}
+              data={gallery}
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
@@ -177,17 +178,17 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
             />
             <View style={styles.photoScrim} pointerEvents="none" />
           </Animated.View>
-          {store.photos.length > 1 ? (
+          {gallery.length > 1 ? (
             <View style={[styles.photoCounter, { backgroundColor: colors.scrim }]}>
               <Text
                 variant="caption"
                 color="onScrim"
                 accessibilityLabel={t('detail.photo', {
                   current: photoIndex + 1,
-                  total: store.photos.length,
+                  total: gallery.length,
                 })}
               >
-                {`${photoIndex + 1} / ${store.photos.length}`}
+                {`${photoIndex + 1} / ${gallery.length}`}
               </Text>
             </View>
           ) : null}

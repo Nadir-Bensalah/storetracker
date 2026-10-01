@@ -8,7 +8,7 @@ import { radius, spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 import { Text } from '@/ui/Text';
 
-import { photos } from './data/photos';
+import { knownPhotos, photos } from './data/photos';
 import { StatusLine } from './StatusLine';
 import type { Store } from './types';
 import type { StatusTone } from './useOpeningStatusLabel';
@@ -29,7 +29,7 @@ export const NearbyCard = memo(function NearbyCard({
   onPress,
 }: NearbyCardProps) {
   const { colors } = useTheme();
-  const photo = store.photos[0];
+  const photo = knownPhotos(store.photos)[0];
 
   return (
     <Animated.View

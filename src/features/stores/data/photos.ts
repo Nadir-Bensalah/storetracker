@@ -60,3 +60,12 @@ export const photos = {
 } as const;
 
 export type PhotoId = keyof typeof photos;
+
+export function isPhotoId(id: string): id is PhotoId {
+  return id in photos;
+}
+
+/** Keeps only the ids that exist; a snapshot saved by an older build may carry renamed ones. */
+export function knownPhotos(ids: readonly string[]): PhotoId[] {
+  return ids.filter(isPhotoId);
+}

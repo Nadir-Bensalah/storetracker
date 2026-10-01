@@ -51,3 +51,14 @@ describe('StoreDetailScreen', () => {
     expect(await screen.findByText('Magasin introuvable')).toBeOnTheScreen();
   });
 });
+
+it('renders a favorite whose saved photo ids no longer exist', async () => {
+  jest.mocked(NetInfo.fetch).mockResolvedValueOnce({ isConnected: false } as never);
+  jest.mocked(useLocalSearchParams).mockReturnValue({ id: store.id });
+  const stale = { ...store, photos: ['interieur-lestrade' as never] };
+  await renderWithStore(<StoreDetailScreen />, {
+    favorites: { ids: [store.id], byId: { [store.id]: stale } },
+  });
+
+  expect(await screen.findByRole('header', { name: store.name })).toBeOnTheScreen();
+});

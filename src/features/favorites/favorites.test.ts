@@ -38,3 +38,30 @@ describe('favorites', () => {
     expect(selectFavoriteIds(restored.getState())).toEqual([]);
   });
 });
+
+describe('favorites saved by an older build', () => {
+  it('repairs renamed photo ids instead of crashing later', () => {
+    const stale = { ...first, photos: ['interieur-fauvel', 'fauvel-librairie'] };
+    storage.set('favorites.v1', JSON.stringify({ ids: [first.id], byId: { [first.id]: stale } }));
+
+    const restored = createStore(loadPersistedState(initialPreferences('fr')));
+
+    expect(restored.getState().favorites.byId[first.id]?.photos).toEqual(['fauvel-librairie']);
+  });
+
+  it('falls back to the brand photos when none of the saved ids exist, and drops broken entries', () => {
+    const stale = { ...first, photos: ['interieur-fauvel'] };
+    storage.set(
+      'favorites.v2',
+      JSON.stringify({
+        ids: [first.id, 'ghost'],
+        byId: { [first.id]: stale, ghost: { id: 'ghost' } },
+      }),
+    );
+
+    const restored = createStore(loadPersistedState(initialPreferences('fr')));
+
+    expect(restored.getState().favorites.ids).toEqual([first.id]);
+    expect(restored.getState().favorites.byId[first.id]?.photos.length).toBeGreaterThan(0);
+  });
+});

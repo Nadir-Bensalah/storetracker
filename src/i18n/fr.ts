@@ -148,6 +148,10 @@ export const fr = {
     contact: 'Me contacter',
     storeLinksNote: 'Les liens ouvrent l’App Store ou Google Play.',
   },
+  errors: {
+    screenTitle: 'Cet écran a rencontré un problème',
+    screenBody: 'Réessayez, ou revenez en arrière. Vos favoris sont conservés.',
+  },
   settings: {
     title: 'Paramètres',
     language: 'Langue',

@@ -145,6 +145,10 @@ export const en: Translations = {
     contact: 'Contact me',
     storeLinksNote: 'Links open the App Store or Google Play.',
   },
+  errors: {
+    screenTitle: 'Something went wrong on this screen',
+    screenBody: 'Try again, or go back. Your favorites are safe.',
+  },
   settings: {
     title: 'Settings',
     language: 'Language',
