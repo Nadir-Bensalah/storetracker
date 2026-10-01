@@ -106,6 +106,14 @@ function bootstrapped({ persistor }: ReturnType<typeof createCartStore>) {
 }
 
 describe('persistence', () => {
+  // persistReducer arms a 5 s rehydration timeout; fake timers keep it from
+  // outliving the test.
+  beforeEach(() => jest.useFakeTimers());
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
   it('writes the cart to storage and restores it in a new store', async () => {
     const storage = memoryStorage();
     const first = createCartStore(storage);
