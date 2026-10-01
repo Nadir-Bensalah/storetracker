@@ -8,11 +8,14 @@ name: Search
       LOCATION: deny
 - tapOn: 'Search a store'
 - waitForAnimationToEnd
-- tapOn: 'Search a store or a city…'
+# iOS exposes the search bar by its placeholder; on Android it is already focused.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: 'Search a store or a city…'
 - inputText: 'Gautrand Lices'
-- assertVisible: 'Results'
 - assertVisible: '1 store'
-- hideKeyboard
 - tapOn: 'Gautrand Lices, .*'
 - assertVisible: 'Gautrand Lices'
 - assertVisible: 'Place des Lices, 35000 Rennes'

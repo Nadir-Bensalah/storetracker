@@ -16,9 +16,13 @@ name: Error and retry
 - tapOn: 'Close'
 - tapOn: 'Search a store'
 - waitForAnimationToEnd
-- tapOn: 'Search a store or a city…'
+# iOS exposes the search bar by its placeholder; on Android it is already focused.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: 'Search a store or a city…'
 - inputText: 'Rambert'
-- hideKeyboard
 - assertVisible: 'Couldn’t load the stores'
 - tapOn: 'Settings'
 - scrollUntilVisible:
