@@ -25,33 +25,40 @@ export function StoreLink({ store, tab, children }: StoreLinkProps) {
   const dispatch = useAppDispatch();
   const isFavorite = useAppSelector((state) => selectIsFavorite(state, store.id));
   const href = `/${tab}/${store.id}` as Href;
+  const onPress = () => void Haptics.selectionAsync();
+
+  // With `asChild`, Link accepts exactly one child unless Preview and Menu are
+  // its direct children (a fragment or a `null` would count as extra children).
+  if (Platform.OS !== 'ios') {
+    return (
+      <Link href={href} asChild onPress={onPress}>
+        {children}
+      </Link>
+    );
+  }
 
   return (
-    <Link href={href} asChild onPress={() => void Haptics.selectionAsync()}>
+    <Link href={href} asChild onPress={onPress}>
       <Link.Trigger>{children}</Link.Trigger>
-      {Platform.OS === 'ios' ? (
-        <>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction
-              title={t('detail.callShort')}
-              icon="phone.fill"
-              onPress={() => Linking.openURL(`tel:${store.phone.replace(/\s/g, '')}`)}
-            />
-            <Link.MenuAction
-              title={t('detail.directions')}
-              icon="arrow.triangle.turn.up.right.diamond.fill"
-              onPress={() => Linking.openURL(directionsUrl(store))}
-            />
-            <Link.MenuAction
-              title={isFavorite ? t('detail.removeFavorite') : t('detail.addFavorite')}
-              icon={isFavorite ? 'heart.slash' : 'heart'}
-              destructive={isFavorite}
-              onPress={() => dispatch(favoriteToggled(store))}
-            />
-          </Link.Menu>
-        </>
-      ) : null}
+      <Link.Preview />
+      <Link.Menu>
+        <Link.MenuAction
+          title={t('detail.callShort')}
+          icon="phone.fill"
+          onPress={() => Linking.openURL(`tel:${store.phone.replace(/\s/g, '')}`)}
+        />
+        <Link.MenuAction
+          title={t('detail.directions')}
+          icon="arrow.triangle.turn.up.right.diamond.fill"
+          onPress={() => Linking.openURL(directionsUrl(store))}
+        />
+        <Link.MenuAction
+          title={isFavorite ? t('detail.removeFavorite') : t('detail.addFavorite')}
+          icon={isFavorite ? 'heart.slash' : 'heart'}
+          destructive={isFavorite}
+          onPress={() => dispatch(favoriteToggled(store))}
+        />
+      </Link.Menu>
     </Link>
   );
 }

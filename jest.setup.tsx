@@ -42,8 +42,8 @@ jest.mock('expo-router', () => {
       .filter((child: React.ReactNode): child is React.ReactElement => React.isValidElement(child))
       .find((child: React.ReactElement) => child.type === Link.Trigger) as
       React.ReactElement<{ children: React.ReactElement<{ onPress?: () => void }> }> | undefined;
-    if (!trigger) return null;
-    return React.cloneElement(trigger.props.children, {
+    const target = trigger ? trigger.props.children : React.Children.only(children);
+    return React.cloneElement(target as React.ReactElement<{ onPress?: () => void }>, {
       onPress: () => {
         onPress?.();
         router.push(href);
