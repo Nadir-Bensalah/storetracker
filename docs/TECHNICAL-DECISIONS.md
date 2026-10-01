@@ -84,7 +84,7 @@ Un Context échoue au point 5 (tous les consommateurs sont re-rendus). Des hooks
 
 **Choix.** Le favori garde une copie du magasin. L'onglet Favoris et le détail fonctionnent sans réseau ; le détail affiche « informations enregistrées » quand la requête échoue.
 
-**Compromis.** Un instantané peut vieillir (horaires modifiés). Le détail préfère toujours la réponse du serveur quand elle arrive.
+**Compromis.** Un instantané peut vieillir (horaires modifiés) et il est figé par le build qui l'a écrit. Le détail préfère toujours la réponse du serveur quand elle arrive, et les instantanés sont vérifiés et réparés au chargement (`sanitizeFavorites`) : un identifiant de photo renommé entre deux versions a fait planter la fiche en release sur un appareil qui gardait des favoris de la première version. Chaque route exporte aussi un `ErrorBoundary` : une erreur de rendu affiche un écran de reprise au lieu de fermer l'app.
 
 ---
 

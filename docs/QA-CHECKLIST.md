@@ -58,6 +58,7 @@ Cocher **iOS** et **Android** séparément. Chaque ligne dit quoi faire et ce qu
 | 28 | Ajouter un favori | Cœur plein, retour haptique, animation | ☐ | ☐ |
 | 29 | Onglet Favoris | Le magasin y est ; retirer le cœur l'enlève avec une animation | ☐ | ☐ |
 | 30 | Tuer et relancer l'app | Favoris, langue et apparence conservés | ☐ | ☐ |
+| 30b | Installer la nouvelle version par-dessus l'ancienne, avec des favoris existants | Favoris toujours là, fiches ouvrables, aucun plantage | ☐ | ☐ |
 
 ## Paramètres
 
