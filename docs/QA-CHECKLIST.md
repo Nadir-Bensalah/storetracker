@@ -87,7 +87,7 @@ Cocher **iOS** et **Android** séparément. Chaque ligne dit quoi faire et ce qu
 | 41 | Paysage | Lisible, rien sous l'encoche | ☐ | ☐ |
 | 42 | Clavier ouvert sur la recherche | Le champ reste visible ; défiler ferme le clavier | ☐ | ☐ |
 | 43 | Onglets | Barre système : Liquid Glass sur iOS 26+, Material 3 sur Android | ☐ | ☐ |
-| 44 | Bord à bord Android | Contenu sous les barres système, sans chevauchement de texte | — | ☐ |
+| 44 | Bord à bord Android | Contenu sous les barres système, sans chevauchement de texte | n/a | ☐ |
 
 ## Accessibilité
 

@@ -6,6 +6,17 @@ Trouver un magasin, voir s'il est ouvert, savoir à quelle distance il est, le g
 
 Ce dépôt contient aussi les réponses aux parties 1 et 2 du test : [QCM et exercices](assessment/README.md).
 
+## En deux minutes
+
+| | |
+|---|---|
+| **Quoi** | Liste de 120 magasins fictifs, recherche, infinite scroll, fiche avec carte et horaires, favoris persistés, FR/EN, clair/sombre, iOS et Android natifs |
+| **Lancer** | `npm ci` puis `npx expo run:ios` ou `npx expo run:android` (ou l'APK et le `.app` simulateur de la release) |
+| **Vérifier** | `npm run check` : lint, typage strict, 76 tests Jest. `maestro test .maestro` : 6 parcours sur simulateur ou émulateur |
+| **Sujet** | Chaque ligne du PDF et sa preuve : [docs/FINAL-COMPLIANCE.md](docs/FINAL-COMPLIANCE.md) |
+| **Décisions** | Expo SDK 57 + Expo Router, onglets et piles natifs, Redux Toolkit + RTK Query, MMKV, API simulée. Pourquoi et à quel prix : [docs/TECHNICAL-DECISIONS.md](docs/TECHNICAL-DECISIONS.md) |
+| **Où regarder** | `src/features/stores/StoresScreen.tsx` (la FlatList), `src/features/stores/api/` (données), `src/store/persistence.ts` (favoris), `src/app/` (navigation) |
+
 ---
 
 ## Essayer l'application
@@ -187,9 +198,7 @@ Sobres et fonctionnelles, toutes désactivées quand « Réduire les animations 
 
 ## Développement assisté par IA
 
-J'ai développé ce projet avec Claude Code, comme je travaille au quotidien. L'outil a accéléré l'exploration, l'écriture du code et des tests et la rédaction. Les choix d'architecture et de produit, la relecture de chaque changement et la vérification sur iOS et Android sont de mon fait.
-
-Je considère que savoir utiliser ces outils fait partie du métier aujourd'hui, à une condition : comprendre et assumer chaque ligne livrée. Je peux expliquer n'importe quelle partie de ce dépôt.
+Claude Code a été utilisé comme outil d'assistance au développement sur ce projet, notamment pour accélérer l'exploration, l'implémentation et l'écriture des tests. Les choix d'architecture, de produit et les arbitrages techniques ont ensuite été revus et validés dans le cadre du rendu.
 
 ## Auteur
 
