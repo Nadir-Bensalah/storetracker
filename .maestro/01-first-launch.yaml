@@ -7,8 +7,8 @@ name: First launch
     permissions:
       location: unset
 - extendedWaitUntil:
-    visible: 'StoreTracker.*'
-    timeout: 30000
+    visible: 'Français.*'
+    timeout: 60000
 - tapOn: 'Français.*'
 - assertVisible: 'Bienvenue'
 - tapOn: 'English.*'

@@ -16,6 +16,7 @@ name: Error and retry
 - tapOn: 'Close'
 - tapOn: 'Search a store'
 - waitForAnimationToEnd
+- tapOn: 'Search a store or a city…'
 - inputText: 'Rambert'
 - hideKeyboard
 - assertVisible: 'Couldn’t load the stores'

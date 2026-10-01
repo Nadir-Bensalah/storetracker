@@ -46,7 +46,6 @@ export const StoreRow = memo(function StoreRow({ store, status, distance, tab }:
             .filter(Boolean)
             .join(', ')}
           android_ripple={{ color: colors.pressed }}
-          // Link clones this element and flattens its style: a single object, not a function.
           style={styles.main}
         >
           {photo ? (

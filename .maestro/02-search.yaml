@@ -8,6 +8,7 @@ name: Search
       LOCATION: deny
 - tapOn: 'Search a store'
 - waitForAnimationToEnd
+- tapOn: 'Search a store or a city…'
 - inputText: 'Gautrand Lices'
 - assertVisible: 'Results'
 - assertVisible: '1 store'
