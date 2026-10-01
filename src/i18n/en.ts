@@ -57,7 +57,6 @@ export const en: Translations = {
     offlineBody: 'Reconnect to browse stores. Your favorites are still available.',
     loadMoreError: 'Couldn’t load more stores.',
     mapLabel: 'Map of nearby stores',
-    mapUnavailable: 'Map unavailable on this Android build: no Google Maps key (see README).',
   },
   status: {
     openUntil: 'Open until {{time}}',

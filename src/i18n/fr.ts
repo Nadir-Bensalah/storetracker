@@ -58,8 +58,6 @@ export const fr = {
     offlineBody: 'Reconnectez-vous pour voir les magasins. Vos favoris restent disponibles.',
     loadMoreError: 'La suite n’a pas pu être chargée.',
     mapLabel: 'Carte des magasins à proximité',
-    mapUnavailable:
-      'Carte indisponible sur cette version Android : clé Google Maps absente (voir le README).',
   },
   status: {
     openUntil: 'Ouvert jusqu’à {{time}}',

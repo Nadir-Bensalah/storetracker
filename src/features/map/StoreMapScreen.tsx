@@ -1,5 +1,4 @@
 import { skipToken } from '@reduxjs/toolkit/query';
-import Constants from 'expo-constants';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,10 +24,7 @@ import { Button } from '@/ui/Button';
 import { GlassPanel } from '@/ui/GlassPanel';
 import { Text } from '@/ui/Text';
 
-import { googleDarkStyle } from './googleDarkStyle';
-
-const mapsAvailable =
-  Platform.OS !== 'android' || Constants.expoConfig?.extra?.hasGoogleMapsKey === true;
+import { AndroidMap } from './AndroidMap';
 
 // Rough urban estimates from the straight-line distance, labelled as such:
 // streets add about 30 %, walking 80 m per minute, driving about 25 km/h in town.
@@ -57,7 +53,7 @@ export function StoreMapScreen() {
 
   useEffect(() => {
     const points = [...stores.map((item) => item.coordinates), ...(origin ? [origin] : [])];
-    if (points.length < 2) return;
+    if (points.length < 2 || Platform.OS !== 'ios') return;
     // Let the sheet finish presenting before framing the points.
     const timer = setTimeout(() => {
       mapRef.current?.fitToCoordinates(points, {
@@ -99,7 +95,20 @@ export function StoreMapScreen() {
           ),
         }}
       />
-      {mapsAvailable ? (
+      {Platform.OS === 'android' ? (
+        <AndroidMap
+          stores={stores}
+          center={center}
+          span={0.02}
+          interactive
+          showsUserLocation
+          fitTo={[...stores.map((item) => item.coordinates), ...(origin ? [origin] : [])]}
+          fitPadding={{ top: insets.top + 140, right: 60, bottom: 300, left: 60 }}
+          path={store && origin ? [origin, store.coordinates] : undefined}
+          selectedId={focused?.id}
+          onStorePress={nearbyMode ? setSelected : undefined}
+        />
+      ) : (
         <MapView
           ref={mapRef}
           style={StyleSheet.absoluteFill}
@@ -107,7 +116,6 @@ export function StoreMapScreen() {
           showsUserLocation
           showsCompass={false}
           userInterfaceStyle={scheme}
-          customMapStyle={scheme === 'dark' ? googleDarkStyle : undefined}
           mapPadding={{ top: insets.top + 56, right: 0, bottom: 0, left: 0 }}
         >
           {stores.map((item) => (
@@ -130,14 +138,7 @@ export function StoreMapScreen() {
             />
           ) : null}
         </MapView>
-      ) : (
-        <View style={styles.notice}>
-          <Text variant="subhead" color="textSecondary" style={styles.center}>
-            {t('stores.mapUnavailable')}
-          </Text>
-        </View>
       )}
-
       <GlassPanel style={[styles.panel, { paddingBottom: insets.bottom + spacing.lg }]}>
         {focused ? (
           <>
@@ -210,13 +211,6 @@ export function StoreMapScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, justifyContent: 'flex-end' },
   close: { minHeight: minTouchTarget, justifyContent: 'center', paddingHorizontal: spacing.md },
-  notice: {
-    ...StyleSheet.absoluteFill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-  },
-  center: { textAlign: 'center' },
   panel: {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.xl,

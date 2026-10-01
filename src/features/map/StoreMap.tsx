@@ -1,20 +1,15 @@
-import Constants from 'expo-constants';
-import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
 import MapView, { Marker, type Region } from 'react-native-maps';
 
 import type { Coordinates, Store } from '@/features/stores/types';
-import { radius, spacing } from '@/theme/tokens';
+import { radius } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
-import { Text } from '@/ui/Text';
 
-import { googleDarkStyle } from './googleDarkStyle';
+import { AndroidMap } from './AndroidMap';
 
-// Without an API key the Google Maps SDK throws when the view is created, so
-// the map is replaced by an explicit notice instead of crashing the screen.
-const mapsAvailable =
-  Platform.OS !== 'android' || Constants.expoConfig?.extra?.hasGoogleMapsKey === true;
-
+// iOS: Apple Maps through react-native-maps, no key needed.
+// Android: Google Maps would need an API key this project deliberately does
+// not ship, so the map is MapLibre with OpenStreetMap data (see AndroidMap).
 interface StoreMapProps {
   stores: Store[];
   center: Coordinates;
@@ -37,20 +32,7 @@ export function StoreMap({
   onStorePress,
   style,
 }: StoreMapProps) {
-  const { t } = useTranslation();
   const { scheme, colors } = useTheme();
-
-  if (!mapsAvailable) {
-    return (
-      <View style={[styles.map, styles.notice, { backgroundColor: colors.surfaceMuted }, style]}>
-        <Text variant="footnote" color="textSecondary" style={styles.noticeText}>
-          {t('stores.mapUnavailable')}
-        </Text>
-      </View>
-    );
-  }
-
-  const region: Region = { ...center, latitudeDelta: span, longitudeDelta: span };
 
   return (
     <View
@@ -58,31 +40,40 @@ export function StoreMap({
       accessible={!interactive}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole={interactive ? undefined : 'image'}
+      importantForAccessibility={interactive ? 'auto' : 'no-hide-descendants'}
     >
-      <MapView
-        style={StyleSheet.absoluteFill}
-        region={region}
-        showsUserLocation={showsUserLocation}
-        scrollEnabled={interactive}
-        zoomEnabled={interactive}
-        pitchEnabled={false}
-        rotateEnabled={false}
-        toolbarEnabled={false}
-        showsPointsOfInterests={false}
-        userInterfaceStyle={scheme}
-        customMapStyle={scheme === 'dark' ? googleDarkStyle : undefined}
-        importantForAccessibility={interactive ? 'auto' : 'no-hide-descendants'}
-      >
-        {stores.map((store) => (
-          <Marker
-            key={store.id}
-            coordinate={store.coordinates}
-            title={store.name}
-            pinColor={colors.accent}
-            onCalloutPress={onStorePress ? () => onStorePress(store) : undefined}
-          />
-        ))}
-      </MapView>
+      {Platform.OS === 'android' ? (
+        <AndroidMap
+          stores={stores}
+          center={center}
+          span={span}
+          interactive={interactive}
+          showsUserLocation={showsUserLocation}
+          onStorePress={onStorePress}
+        />
+      ) : (
+        <MapView
+          style={StyleSheet.absoluteFill}
+          region={{ ...center, latitudeDelta: span, longitudeDelta: span } satisfies Region}
+          showsUserLocation={showsUserLocation}
+          scrollEnabled={interactive}
+          zoomEnabled={interactive}
+          pitchEnabled={false}
+          rotateEnabled={false}
+          showsPointsOfInterests={false}
+          userInterfaceStyle={scheme}
+        >
+          {stores.map((store) => (
+            <Marker
+              key={store.id}
+              coordinate={store.coordinates}
+              title={store.name}
+              pinColor={colors.accent}
+              onCalloutPress={onStorePress ? () => onStorePress(store) : undefined}
+            />
+          ))}
+        </MapView>
+      )}
     </View>
   );
 }
@@ -93,10 +84,4 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     overflow: 'hidden',
   },
-  notice: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  noticeText: { textAlign: 'center' },
 });

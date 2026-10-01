@@ -148,13 +148,17 @@ Un Context échoue au point 5 (tous les consommateurs sont re-rendus). Des hooks
 
 ---
 
-## 11. Carte : react-native-maps
+## 11. Cartes : Apple Plans sur iOS, MapLibre et OpenStreetMap sur Android
 
-**Choix.** Apple Plans sur iOS (sans clé), Google Maps sur Android (clé requise).
+**Problème.** Le sujet demande une MapView. Sur Android, `react-native-maps` repose sur le SDK Google Maps, qui exige une clé d'API rattachée à un compte de facturation, et plante sans elle.
 
-**Pourquoi pas une autre.** `expo-maps` a la même contrainte de clé sur Android. MapLibre se passe de clé mais retire Apple Plans sur iOS.
+**Choix.** iOS : Apple Plans via `react-native-maps`, sans clé. Android : MapLibre (`@maplibre/maplibre-react-native`) avec les tuiles vectorielles d'OpenFreeMap, c'est-à-dire des données OpenStreetMap, sans clé ni compte. Un seul composant `StoreMap` choisit l'implémentation selon la plateforme ; la carte plein écran fait de même.
 
-**Sans clé sur Android.** Le SDK Google lève une exception à la création de la carte. L'app détecte l'absence de clé au build et affiche un message à la place de la carte, au lieu de planter. Voir le README pour fournir la clé.
+**Pourquoi.** Le reviewer compile et lance l'app sans rien créer chez Google, et l'app ne contient aucune clé à protéger. Les deux cartes sont des vues natives (MapKit, MapLibre Native).
+
+**Alternatives.** Google Maps avec une clé restreinte : fonctionne, mais impose une clé à transmettre et à restreindre. `expo-maps` : même contrainte. Un message « clé absente » à la place de la carte : conforme en apparence, mais pas de carte sur Android.
+
+**Compromis.** Deux bibliothèques de cartes au lieu d'une, et deux styles visuels (Apple, OpenFreeMap). Le style sombre d'Android est celui d'OpenFreeMap. Les tuiles viennent d'un service public gratuit : en production, on hébergerait ses tuiles ou on prendrait un contrat.
 
 ---
 

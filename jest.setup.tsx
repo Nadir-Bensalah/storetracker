@@ -95,6 +95,19 @@ jest.mock('react-native-maps', () => {
 
 jest.mock('expo-symbols', () => ({ SymbolView: () => null }));
 
+jest.mock('@maplibre/maplibre-react-native', () => {
+  const { View } = require('react-native');
+  const Noop = () => null;
+  return {
+    Map: View,
+    Camera: Noop,
+    Marker: View,
+    UserLocation: Noop,
+    GeoJSONSource: View,
+    Layer: Noop,
+  };
+});
+
 jest.mock('expo-location', () => ({
   PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' },
   Accuracy: { Balanced: 3 },

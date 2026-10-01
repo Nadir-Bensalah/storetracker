@@ -46,7 +46,6 @@ npx expo run:ios               # ou : npx expo run:android
 
 | Variable | Rôle | Défaut |
 |---|---|---|
-| `GOOGLE_MAPS_ANDROID_API_KEY` | Carte Google sur Android. Sans elle, la carte est remplacée par un message (iOS utilise Apple Plans, sans clé). | vide |
 | `EXPO_PUBLIC_API_LATENCY_MS` | Latence simulée de l'API fictive | `600` |
 | `EXPO_PUBLIC_API_ERROR_RATE` | Probabilité d'échec d'un appel, de 0 à 1, pour voir les états d'erreur | `0` |
 | `APPLE_TEAM_ID` | Équipe Apple, seulement pour installer sur un iPhone physique | vide |
@@ -70,7 +69,7 @@ La même commande tourne en CI sur chaque push.
 | Liste de 50 magasins minimum, API ou mock | 120 magasins, API simulée : `src/features/stores/data`, `src/features/stores/api` |
 | Filtrage par nom | Écran de recherche avec la barre native de l'en-tête, anti-rebond, recherche côté serveur, insensible aux accents : `SearchScreen.tsx` |
 | Infinite scroll | Pages de 20 : `StoresScreen.tsx` (`onEndReached`), `storesApi.ts` (`infiniteQuery`) |
-| Détail : MapView | `src/features/map/StoreMap.tsx` |
+| Détail : MapView | `src/features/map/StoreMap.tsx` : Apple Plans sur iOS, MapLibre + OpenStreetMap sur Android |
 | Détail : horaires | `OpeningHoursRow.tsx` : aujourd'hui, puis la semaine dépliable |
 | Détail : bouton Favori | En-tête du détail, lignes de liste, cartes « Autour de vous » |
 | Favoris persistés localement | MMKV : `src/store/persistence.ts` |
@@ -115,6 +114,7 @@ Le détail, avec les alternatives et les compromis, est dans [docs/TECHNICAL-DEC
 - **MMKV** lu de façon synchrone : thème, langue et favoris sont là avant le premier rendu, sans `PersistGate`.
 - **Favoris en instantanés** : ils restent lisibles hors ligne.
 - **API simulée** avec latence, erreurs, hors ligne, pagination et recherche côté serveur.
+- **Cartes sans clé** : Apple Plans sur iOS, MapLibre et OpenStreetMap sur Android ; aucune clé Google à fournir.
 
 ## Au-delà du sujet
 
@@ -174,11 +174,11 @@ Détail des tests Jest :
 | Recherche | `UISearchController` dans l'en-tête de l'écran de recherche | `SearchView` natif de la pile |
 | Lignes et cartes | Appui = retour haptique de sélection, puis la fiche dans la pile de l'onglet | Idem, avec l'effet ripple |
 | Réglages | Feuille native (page sheet) avec sa propre pile | Écran modal plein écran avec sa pile |
-| Cartes plein écran | Carte sous un en-tête transparent, panneau Liquid Glass (iOS 26) ou flouté collé en bas, estimations en voiture et à pied | Écran modal, panneau opaque |
+| Cartes plein écran | Carte sous un en-tête transparent, panneau Liquid Glass (iOS 26) ou flouté collé en bas, estimations en voiture et à pied | Écran modal, carte MapLibre, panneau opaque |
 | Liens externes | `SFSafariViewController` | Chrome Custom Tabs |
 | Choix uniques | Coche, comme dans Réglages | Boutons radio |
 | Retour tactile | Haptique d'impact | Haptique système (`performHapticFeedback`) et ripple |
-| Carte | Apple Plans | Google Maps, style sombre fourni |
+| Carte | Apple Plans (`react-native-maps`) | MapLibre avec les tuiles OpenFreeMap (données OpenStreetMap), sans clé |
 | Icônes | SF Symbols | Material Symbols |
 | Demande de position | Alerte système, texte traduit | Boîte de dialogue système |
 

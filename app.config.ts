@@ -64,14 +64,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         isAndroidBackgroundLocationEnabled: false,
       },
     ],
-    ['react-native-maps', { androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY }],
+    // iOS only (Apple Maps). On Android the maps are MapLibre + OpenStreetMap,
+    // so no Google Maps key is needed anywhere.
+    'react-native-maps',
+    '@maplibre/maplibre-react-native',
     // Builds made with Xcode 27 crash at launch without the UIScene life cycle.
     // No effect with Xcode 26; becomes the default in SDK 58.
     ['expo-build-properties', { ios: { enableSceneSupport: true } }],
   ],
-  extra: {
-    hasGoogleMapsKey: Boolean(process.env.GOOGLE_MAPS_ANDROID_API_KEY),
-  },
   experiments: {
     typedRoutes: true,
   },

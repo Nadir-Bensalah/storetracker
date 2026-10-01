@@ -46,7 +46,7 @@ Cocher **iOS** et **Android** séparément. Chaque ligne dit quoi faire et ce qu
 | 21 | Glisser les photos | Pagination, compteur « 1 / 2 » | ☐ | ☐ |
 | 22 | Tirer vers le bas | La photo s'étire | ☐ | ☐ |
 | 23 | Déplier les horaires | Semaine entière, jour courant en gras | ☐ | ☐ |
-| 24 | Toucher la carte | Feuille plein écran : magasin, position, tracé à vol d'oiseau, durée estimée | ☐ | ☐ |
+| 24 | Toucher la carte | Plein écran : magasin, position, tracé, estimations voiture et à pied ; Apple Plans sur iOS, MapLibre/OpenStreetMap sur Android | ☐ | ☐ |
 | 25 | « Itinéraire » | Ouvre Plans (iOS) ou le choix de l'app de cartes (Android) | ☐ | ☐ |
 | 26 | « Appeler » | Propose l'appel (numéro fictif ARCEP) | ☐ | ☐ |
 | 27 | Partager | Feuille de partage du système | ☐ | ☐ |
