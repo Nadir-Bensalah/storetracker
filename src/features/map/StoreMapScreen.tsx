@@ -80,6 +80,8 @@ export function StoreMapScreen() {
       <Stack.Screen
         options={{
           title,
+          // A modal closes with its own button; the stack's back arrow would duplicate it on Android.
+          headerBackVisible: false,
           headerTransparent: true,
           headerBlurEffect: 'none',
           headerShadowVisible: false,
