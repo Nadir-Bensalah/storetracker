@@ -5,8 +5,9 @@ jest.mock('@react-native-community/netinfo', () =>
   require('@react-native-community/netinfo/jest/netinfo-mock.js'),
 );
 
-jest.mock('react-native-safe-area-context', () =>
-  require('react-native-safe-area-context/jest/mock').default,
+jest.mock(
+  'react-native-safe-area-context',
+  () => require('react-native-safe-area-context/jest/mock').default,
 );
 
 // In-memory MMKV: the native module (Nitro) does not exist under Jest.
@@ -56,4 +57,3 @@ jest.mock('@/ui/useReducedMotion', () => ({ useReducedMotion: () => true }));
 
 mockServerConfig.latencyMs = 0;
 initI18n('fr');
-

@@ -21,7 +21,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     setLoading(true);
     try {
       await onSubmit(email, password);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept as provided
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept as provided
     } catch (e) {
       setError('Identifiants incorrects');
     } finally {

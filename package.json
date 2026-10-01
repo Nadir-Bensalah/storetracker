@@ -54,7 +54,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "format": "prettier --write .",
-    "check": "npm run lint && npm run typecheck && npm test -- --ci"
+    "check": "scripts/check-private-files.sh && npm run lint && npm run typecheck && npm test -- --ci"
   },
   "private": true,
   "jest": {
