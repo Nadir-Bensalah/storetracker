@@ -1,3 +1,5 @@
 {
-  "NSLocationWhenInUseUsageDescription": "StoreTracker uses your location to show nearby stores and their distance. It is never stored or shared."
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StoreTracker uses your location to show nearby stores and their distance. It is never stored or shared."
+  }
 }

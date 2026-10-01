@@ -1,3 +1,5 @@
 {
-  "NSLocationWhenInUseUsageDescription": "StoreTracker utilise votre position pour afficher les magasins proches et leur distance. Elle n’est ni enregistrée ni partagée."
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StoreTracker utilise votre position pour afficher les magasins proches et leur distance. Elle n’est ni enregistrée ni partagée."
+  }
 }
