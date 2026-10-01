@@ -2,7 +2,16 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import {
+  Animated,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+  type ViewStyle,
+} from 'react-native';
+import Reanimated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LocationPrompt } from '@/features/location/LocationPrompt';
@@ -19,7 +28,7 @@ import { NearbyCard } from './NearbyCard';
 import { SearchField } from './SearchField';
 import type { StatusTone } from './useOpeningStatusLabel';
 
-const heroPhoto = require('../../../assets/images/onboarding.webp');
+const heroPhoto = require('../../../assets/images/onboarding-street.webp');
 
 export const HERO_HEIGHT = 300;
 
@@ -34,6 +43,7 @@ interface StoresHeaderProps {
   listTitle: string;
   listCount: string | null;
   sortControl: React.ReactNode;
+  heroStretchStyle?: Animated.WithAnimatedValue<ViewStyle>;
 }
 
 export function StoresHeader({
@@ -47,6 +57,7 @@ export function StoresHeader({
   listTitle,
   listCount,
   sortControl,
+  heroStretchStyle,
 }: StoresHeaderProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -116,7 +127,11 @@ export function StoresHeader({
       <OfflineBanner />
 
       {searching ? null : origin ? (
-        <View style={styles.section}>
+        <Reanimated.View
+          entering={FadeIn.duration(220)}
+          exiting={FadeOut.duration(160)}
+          style={styles.section}
+        >
           <View style={styles.padded}>
             <StoreMap
               stores={nearby.stores ?? []}
@@ -153,11 +168,15 @@ export function StoresHeader({
               {t('stores.nearbyEmpty')}
             </Text>
           )}
-        </View>
+        </Reanimated.View>
       ) : (
-        <View style={styles.section}>
+        <Reanimated.View
+          entering={FadeIn.duration(220)}
+          exiting={FadeOut.duration(160)}
+          style={styles.section}
+        >
           <LocationPrompt />
-        </View>
+        </Reanimated.View>
       )}
 
       <SectionTitle title={listTitle} count={listCount} trailing={sortControl} />

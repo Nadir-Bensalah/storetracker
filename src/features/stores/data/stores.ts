@@ -35,9 +35,9 @@ const mountainSeason = week(
   '08:30-19:30',
   '09:00-12:30, 15:00-19:00',
 );
-const lyon: { photos: PhotoId[] } = { photos: ['lestrade-lyon', 'interieur-lestrade'] };
-const mall: { photos: PhotoId[] } = { photos: ['fauvel-galerie', 'interieur-fauvel'] };
-const market: { photos: PhotoId[] } = { photos: ['gautrand-marche', 'interieur-gautrand'] };
+const lyon: { photos: PhotoId[] } = { photos: ['lestrade-lyon', 'lestrade-interior'] };
+const mall: { photos: PhotoId[] } = { photos: ['fauvel-galerie', 'fauvel-interior'] };
+const market: { photos: PhotoId[] } = { photos: ['gautrand-marche', 'gautrand-interior'] };
 
 // Brands and stores are fictional. Streets and cities are real so that the
 // map and distances behave like a real network; phone numbers come from the

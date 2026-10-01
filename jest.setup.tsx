@@ -10,6 +10,8 @@ jest.mock(
   () => require('react-native-safe-area-context/jest/mock').default,
 );
 
+jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+
 // In-memory MMKV: the native module (Nitro) does not exist under Jest.
 jest.mock('react-native-mmkv', () => ({
   createMMKV: () => {
@@ -49,6 +51,12 @@ jest.mock('expo-location', () => ({
   hasServicesEnabledAsync: jest.fn(async () => true),
   getLastKnownPositionAsync: jest.fn(),
   getCurrentPositionAsync: jest.fn(),
+}));
+
+// A fixed clock (Thursday 1 October 2026, 10:00 in Paris): opening statuses no
+// longer depend on when the tests run, and no minute tick fires mid-test.
+jest.mock('@/features/stores/useNow', () => ({
+  useNow: () => new Date('2026-10-01T10:00:00+02:00'),
 }));
 
 // Tests run with Reduce Motion on: the skeleton pulse would otherwise keep

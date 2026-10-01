@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import { FavoriteButton } from '@/features/favorites/FavoriteButton';
 import { radius, spacing } from '@/theme/tokens';
@@ -36,7 +37,12 @@ export const StoreRow = memo(function StoreRow({
   const photo = store.photos[0];
 
   return (
-    <View style={styles.row}>
+    <Animated.View
+      entering={FadeIn.duration(220)}
+      exiting={FadeOut.duration(180)}
+      layout={LinearTransition.duration(240)}
+      style={styles.row}
+    >
       <Pressable
         onPress={() => onPress(store)}
         accessibilityRole="button"
@@ -72,7 +78,7 @@ export const StoreRow = memo(function StoreRow({
         ) : null}
       </Pressable>
       <FavoriteButton store={store} />
-    </View>
+    </Animated.View>
   );
 });
 

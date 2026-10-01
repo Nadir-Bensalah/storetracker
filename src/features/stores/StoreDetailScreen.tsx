@@ -1,20 +1,21 @@
 import { Image } from 'expo-image';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Animated,
   FlatList,
   Linking,
   Platform,
   Pressable,
-  ScrollView,
   Share,
   StyleSheet,
   useWindowDimensions,
   View,
 } from 'react-native';
 
+import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FavoriteButton } from '@/features/favorites/FavoriteButton';
@@ -30,9 +31,11 @@ import { Icon, type IconName } from '@/ui/Icon';
 import { Skeleton, SkeletonGroup } from '@/ui/Skeleton';
 import { StateView } from '@/ui/StateView';
 import { Text } from '@/ui/Text';
+import { useStretchyHeader } from '@/ui/useStretchyHeader';
 
 import { useGetStoreQuery } from './api/storesApi';
 import { photos } from './data/photos';
+import { directionsUrl } from './directions';
 import { distanceInMeters } from './distance';
 import { OpeningHoursRow } from './OpeningHoursRow';
 import { StatusLine } from './StatusLine';
@@ -47,15 +50,6 @@ const serviceIcons: Record<ServiceId, IconName> = {
   giftCards: 'gift',
   wheelchairAccess: 'accessibility',
 };
-
-function directionsUrl(store: Store) {
-  const { latitude, longitude } = store.coordinates;
-  const label = encodeURIComponent(store.name);
-  // Apple Maps on iOS; on Android a geo: intent lets the user pick their maps app.
-  return Platform.OS === 'ios'
-    ? `https://maps.apple.com/?daddr=${latitude},${longitude}&q=${label}`
-    : `geo:0,0?q=${latitude},${longitude}(${label})`;
-}
 
 export function StoreDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -146,6 +140,7 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
     : undefined;
   const address = `${store.street}, ${store.postalCode} ${store.city}`;
   const photoHeight = Math.round(Math.min(width * 0.8, 420));
+  const { onScroll, stretchStyle } = useStretchyHeader(photoHeight);
 
   const onScrollPhotos = useCallback(
     (event: { nativeEvent: { contentOffset: { x: number } } }) =>
@@ -156,28 +151,32 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
   return (
     <>
       <StatusBar style="light" />
-      <ScrollView
+      <Animated.ScrollView
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xl }}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
       >
         <View style={{ height: photoHeight }}>
-          <FlatList
-            data={store.photos}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={onScrollPhotos}
-            keyExtractor={(photo) => photo}
-            renderItem={({ item }) => (
-              <Image
-                source={photos[item].full}
-                style={{ width, height: photoHeight }}
-                contentFit="cover"
-                accessible={false}
-              />
-            )}
-          />
-          <View style={styles.photoScrim} pointerEvents="none" />
+          <Animated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
+            <FlatList
+              data={store.photos}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={onScrollPhotos}
+              keyExtractor={(photo) => photo}
+              renderItem={({ item }) => (
+                <Image
+                  source={photos[item].full}
+                  style={{ width, height: photoHeight }}
+                  contentFit="cover"
+                  accessible={false}
+                />
+              )}
+            />
+            <View style={styles.photoScrim} pointerEvents="none" />
+          </Animated.View>
           {store.photos.length > 1 ? (
             <View style={[styles.photoCounter, { backgroundColor: colors.scrim }]}>
               <Text
@@ -194,7 +193,10 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
           ) : null}
         </View>
 
-        <View style={[styles.sheet, { backgroundColor: colors.background }]}>
+        <Reanimated.View
+          entering={FadeInDown.duration(320)}
+          style={[styles.sheet, { backgroundColor: colors.background }]}
+        >
           <View style={styles.identity}>
             <Text variant="title" accessibilityRole="header">
               {store.name}
@@ -245,9 +247,9 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
           </View>
 
           <Pressable
-            onPress={() => Linking.openURL(directionsUrl(store))}
+            onPress={() => router.push(`/store-map/${store.id}`)}
             accessibilityRole="button"
-            accessibilityLabel={`${t('detail.directions')}, ${address}`}
+            accessibilityLabel={t('detail.openMap', { address })}
           >
             <StoreMap
               stores={[store]}
@@ -273,8 +275,8 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
               onPress={() => Linking.openURL(`tel:${store.phone.replace(/\s/g, '')}`)}
             />
           </View>
-        </View>
-      </ScrollView>
+        </Reanimated.View>
+      </Animated.ScrollView>
     </>
   );
 }

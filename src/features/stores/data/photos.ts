@@ -9,9 +9,9 @@ export const photos = {
     full: require('../../../../assets/images/stores/lestrade-lyon.webp'),
     thumb: require('../../../../assets/images/stores/lestrade-lyon-thumb.webp'),
   },
-  'interieur-lestrade': {
-    full: require('../../../../assets/images/stores/interieur-lestrade.webp'),
-    thumb: require('../../../../assets/images/stores/interieur-lestrade-thumb.webp'),
+  'lestrade-interior': {
+    full: require('../../../../assets/images/stores/lestrade-interior.webp'),
+    thumb: require('../../../../assets/images/stores/lestrade-interior-thumb.webp'),
   },
   'fauvel-librairie': {
     full: require('../../../../assets/images/stores/fauvel-librairie.webp'),
@@ -21,17 +21,17 @@ export const photos = {
     full: require('../../../../assets/images/stores/fauvel-galerie.webp'),
     thumb: require('../../../../assets/images/stores/fauvel-galerie-thumb.webp'),
   },
-  'interieur-fauvel': {
-    full: require('../../../../assets/images/stores/interieur-fauvel.webp'),
-    thumb: require('../../../../assets/images/stores/interieur-fauvel-thumb.webp'),
+  'fauvel-interior': {
+    full: require('../../../../assets/images/stores/fauvel-interior.webp'),
+    thumb: require('../../../../assets/images/stores/fauvel-interior-thumb.webp'),
   },
   'hollier-showroom': {
     full: require('../../../../assets/images/stores/hollier-showroom.webp'),
     thumb: require('../../../../assets/images/stores/hollier-showroom-thumb.webp'),
   },
-  'interieur-hollier': {
-    full: require('../../../../assets/images/stores/interieur-hollier.webp'),
-    thumb: require('../../../../assets/images/stores/interieur-hollier-thumb.webp'),
+  'hollier-interior': {
+    full: require('../../../../assets/images/stores/hollier-interior.webp'),
+    thumb: require('../../../../assets/images/stores/hollier-interior-thumb.webp'),
   },
   'lauziere-alpes': {
     full: require('../../../../assets/images/stores/lauziere-alpes.webp'),
@@ -49,9 +49,9 @@ export const photos = {
     full: require('../../../../assets/images/stores/gautrand-marche.webp'),
     thumb: require('../../../../assets/images/stores/gautrand-marche-thumb.webp'),
   },
-  'interieur-gautrand': {
-    full: require('../../../../assets/images/stores/interieur-gautrand.webp'),
-    thumb: require('../../../../assets/images/stores/interieur-gautrand-thumb.webp'),
+  'gautrand-interior': {
+    full: require('../../../../assets/images/stores/gautrand-interior.webp'),
+    thumb: require('../../../../assets/images/stores/gautrand-interior-thumb.webp'),
   },
   'thevenot-lyon': {
     full: require('../../../../assets/images/stores/thevenot-lyon.webp'),

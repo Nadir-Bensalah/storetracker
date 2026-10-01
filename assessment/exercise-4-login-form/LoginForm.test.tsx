@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import { LoginForm } from './LoginForm';
 
@@ -12,8 +12,8 @@ async function fillAndSubmit(email: string, password: string) {
   await fireEvent.press(screen.getByTestId('submit-btn'));
 }
 
-// The press is not awaited, so the test can observe the pending state before
-// settling the request itself.
+// The press is started but not awaited, so the test can observe the pending
+// state before settling the request itself.
 async function fillAndStartSubmit(email: string, password: string) {
   await fill(email, password);
   void fireEvent.press(screen.getByTestId('submit-btn'));
@@ -82,8 +82,9 @@ describe('LoginForm', () => {
       await fillAndStartSubmit('ada@example.com', 'secret');
       expect(await screen.findByTestId('loader')).toBeOnTheScreen();
 
-      request.resolve();
-      await waitFor(() => expect(screen.queryByTestId('loader')).toBeNull());
+      // Settling the request inside act() flushes the state updates it causes.
+      await act(async () => request.resolve());
+      expect(screen.queryByTestId('loader')).toBeNull();
     });
 
     it('also hides the loader when the request fails', async () => {
@@ -95,6 +96,7 @@ describe('LoginForm', () => {
 
       request.reject(new Error('500'));
       expect(await screen.findByTestId('error-msg')).toHaveTextContent('Identifiants incorrects');
+      expect(screen.queryByTestId('loader')).toBeNull();
       expect(screen.queryByTestId('loader')).toBeNull();
     });
   });
@@ -123,8 +125,8 @@ describe('LoginForm', () => {
       void fireEvent.press(screen.getByTestId('submit-btn'));
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
-      request.resolve();
-      await waitFor(() => expect(screen.queryByTestId('loader')).toBeNull());
+      await act(async () => request.resolve());
+      expect(screen.queryByTestId('loader')).toBeNull();
     });
 
     it('accepts fields that only contain spaces', async () => {

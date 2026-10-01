@@ -99,6 +99,13 @@ export const en: Translations = {
     notFoundBody: 'This store no longer exists or the link is wrong.',
     offlineSnapshot: 'Offline: showing the details saved with your favorites.',
     mapLabel: 'Map: {{address}}',
+    openMap: 'Expand the map: {{address}}',
+  },
+  map: {
+    estimate: '{{distance}} as the crow flies · about {{minutes}} min on foot',
+    noLocation: 'Turn on location to see the way from where you are.',
+    openInMaps: 'Get directions',
+    openInAppleMaps: 'Directions in Maps',
   },
   favorites: {
     title: 'Favorites',
@@ -126,6 +133,18 @@ export const en: Translations = {
   offline: {
     banner: 'Offline',
   },
+  about: {
+    developerTitle: 'About the developer',
+    role: 'React Native developer, iOS and Android',
+    publishedApps_one: '{{count}} published app',
+    publishedApps_other: '{{count}} published apps',
+    links: 'Links',
+    apps: 'See my apps',
+    appsTitle: 'Published apps',
+    website: 'Website',
+    contact: 'Contact me',
+    storeLinksNote: 'Links open the App Store or Google Play.',
+  },
   settings: {
     title: 'Settings',
     language: 'Language',
@@ -134,11 +153,14 @@ export const en: Translations = {
     appearanceLight: 'Light',
     appearanceDark: 'Dark',
     location: 'Location',
+    locationAccess: 'Location access',
+    platform: 'Platform',
     about: 'About',
-    version: 'Version {{version}}',
+    version: 'Version',
     aboutBody:
       'Technical demonstration built for WSHOP. Brands, stores, opening hours and phone numbers are fictional.',
     developer: 'Development',
+    simulateFailure: 'Simulate an API failure',
     resetOnboarding: 'Show onboarding again',
   },
 };

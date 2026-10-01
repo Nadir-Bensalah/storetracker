@@ -101,6 +101,13 @@ export const fr = {
     notFoundBody: 'Ce magasin n’existe plus ou le lien est incorrect.',
     offlineSnapshot: 'Hors connexion : informations enregistrées avec vos favoris.',
     mapLabel: 'Carte : {{address}}',
+    openMap: 'Agrandir la carte : {{address}}',
+  },
+  map: {
+    estimate: '{{distance}} à vol d’oiseau · environ {{minutes}} min à pied',
+    noLocation: 'Activez la localisation pour voir le trajet depuis votre position.',
+    openInMaps: 'Ouvrir l’itinéraire',
+    openInAppleMaps: 'Itinéraire dans Plans',
   },
   favorites: {
     title: 'Mes favoris',
@@ -129,6 +136,18 @@ export const fr = {
   offline: {
     banner: 'Hors connexion',
   },
+  about: {
+    developerTitle: 'À propos du développeur',
+    role: 'Développeur React Native, iOS et Android',
+    publishedApps_one: '{{count}} application publiée',
+    publishedApps_other: '{{count}} applications publiées',
+    links: 'Liens',
+    apps: 'Voir mes applications',
+    appsTitle: 'Applications publiées',
+    website: 'Site',
+    contact: 'Me contacter',
+    storeLinksNote: 'Les liens ouvrent l’App Store ou Google Play.',
+  },
   settings: {
     title: 'Paramètres',
     language: 'Langue',
@@ -137,11 +156,14 @@ export const fr = {
     appearanceLight: 'Clair',
     appearanceDark: 'Sombre',
     location: 'Localisation',
+    locationAccess: 'Accès à la position',
+    platform: 'Plateforme',
     about: 'À propos',
-    version: 'Version {{version}}',
+    version: 'Version',
     aboutBody:
       'Démonstration technique réalisée pour WSHOP. Enseignes, magasins, horaires et numéros sont fictifs.',
     developer: 'Développement',
+    simulateFailure: 'Simuler une panne de l’API',
     resetOnboarding: 'Revoir l’accueil',
   },
 } as const;

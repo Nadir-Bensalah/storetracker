@@ -87,7 +87,7 @@ export const ProductList = ({ products }) => {
 | Prop                    | Choix                              | Pourquoi                                                                                                                                       |
 | ----------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `initialNumToRender`    | 10                                 | Remplit un écran au premier rendu ; au-delà, on retarde l'affichage                                                                            |
-| `windowSize`            | 11 (valeur par défaut, explicitée) | 5 écrans au-dessus et en dessous. Plus petit économise de la mémoire mais montre des zones blanches au défilement rapide                       |
+| `windowSize` | 11 (21 par défaut) | Environ 5 écrans au-dessus et 5 en dessous au lieu de 10 : deux fois moins de lignes et d'images montées. En échange, un défilement très rapide peut montrer des zones vides. À confirmer par une mesure |
 | `maxToRenderPerBatch`   | non modifié                        | Le défaut (10) convient ; je ne règle qu'après mesure                                                                                          |
 | `removeClippedSubviews` | activé                             | Détache les lignes hors écran. Vrai gain sur Android ; sur iOS il peut faire disparaître du contenu dans certains cas, à vérifier sur appareil |
 

@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
-const paper = '#F7F4EF';
-const ink = '#111215';
+const splashLight = '#FFFFFF';
+const splashDark = '#0B0D12';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -10,7 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'storetracker',
   version: '1.0.0',
   orientation: 'default',
-  icon: './assets/icon.png',
+  icon: './assets/brand/app-icon.png',
   userInterfaceStyle: 'automatic',
   locales: {
     fr: './locales/fr.json',
@@ -28,10 +28,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: 'app.capmedia.storetracker',
     adaptiveIcon: {
-      backgroundColor: ink,
-      foregroundImage: './assets/android-icon-foreground.png',
-      backgroundImage: './assets/android-icon-background.png',
-      monochromeImage: './assets/android-icon-monochrome.png',
+      backgroundColor: '#FFFFFF',
+      foregroundImage: './assets/brand/android-adaptive-foreground.png',
     },
     permissions: ['ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION'],
     blockedPermissions: ['ACCESS_BACKGROUND_LOCATION'],
@@ -45,10 +43,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        image: './assets/splash-icon.png',
-        imageWidth: 96,
-        backgroundColor: paper,
-        dark: { image: './assets/splash-icon-dark.png', backgroundColor: ink },
+        image: './assets/brand/splash-light.png',
+        imageWidth: 200,
+        backgroundColor: splashLight,
+        dark: { image: './assets/brand/splash-dark.png', backgroundColor: splashDark },
+        // Android 12+ masks the splash image to a circle: a narrower wordmark stays inside it.
+        android: { imageWidth: 150 },
       },
     ],
     [

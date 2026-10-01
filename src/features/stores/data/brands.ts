@@ -52,7 +52,7 @@ export const brands: Record<BrandId, Brand> = {
       'giftCards',
       'wheelchairAccess',
     ],
-    photos: ['lestrade-paris', 'interieur-lestrade'],
+    photos: ['lestrade-paris', 'lestrade-interior'],
   },
   fauvel: {
     name: 'Fauvel',
@@ -67,7 +67,7 @@ export const brands: Record<BrandId, Brand> = {
       'closed',
     ),
     services: ['clickAndCollect', 'reserveOnline', 'giftCards'],
-    photos: ['fauvel-librairie', 'interieur-fauvel'],
+    photos: ['fauvel-librairie', 'fauvel-interior'],
   },
   hollier: {
     name: 'Hollier',
@@ -82,7 +82,7 @@ export const brands: Record<BrandId, Brand> = {
       '11:00-18:00',
     ),
     services: ['clickAndCollect', 'inStoreReturns', 'giftCards', 'wheelchairAccess'],
-    photos: ['hollier-showroom', 'interieur-hollier'],
+    photos: ['hollier-showroom', 'hollier-interior'],
   },
   lauziere: {
     name: 'Lauzière',
@@ -127,7 +127,7 @@ export const brands: Record<BrandId, Brand> = {
       '09:00-13:00',
     ),
     services: ['clickAndCollect', 'giftCards'],
-    photos: ['gautrand-epicerie', 'interieur-gautrand'],
+    photos: ['gautrand-epicerie', 'gautrand-interior'],
   },
   thevenot: {
     name: 'Thévenot',

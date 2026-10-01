@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   Platform,
   Pressable,
   RefreshControl,
@@ -26,6 +28,7 @@ import { SkeletonGroup } from '@/ui/Skeleton';
 import { StateView } from '@/ui/StateView';
 import { Text } from '@/ui/Text';
 import { useDebouncedValue } from '@/ui/useDebouncedValue';
+import { useStretchyHeader } from '@/ui/useStretchyHeader';
 
 import { useGetNearbyStoresQuery, useGetStoresInfiniteQuery } from './api/storesApi';
 import { distanceInMeters } from './distance';
@@ -144,21 +147,6 @@ export function StoresScreen() {
     </Pressable>
   ) : null;
 
-  const header = (
-    <StoresHeader
-      search={search}
-      onSearchChange={setSearch}
-      searching={searching}
-      origin={origin}
-      nearby={{ stores: nearby.data, loading: nearby.isLoading }}
-      describe={describe}
-      onOpenStore={openStore}
-      listTitle={searching ? t('stores.results') : t('stores.all')}
-      listCount={total !== undefined ? t('stores.count', { count: total }) : null}
-      sortControl={sortControl}
-    />
-  );
-
   let empty: React.ReactElement | null = null;
   if (isLoading) {
     empty = (
@@ -222,18 +210,32 @@ export function StoresScreen() {
 
   // The status bar sits over the hero photo: light text there, then the
   // regular scheme once the photo has scrolled away under a solid strip.
-  const [scrollY] = useState(() => new Animated.Value(0));
   const [pastHero, setPastHero] = useState(false);
   const threshold = HERO_HEIGHT - spacing.xxl;
-  const onScroll = useMemo(
-    () =>
-      Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-        useNativeDriver: true,
-        listener: (event: { nativeEvent: { contentOffset: { y: number } } }) => {
-          setPastHero(event.nativeEvent.contentOffset.y > threshold);
-        },
-      }),
-    [scrollY, threshold],
+  const onScrollPosition = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) =>
+      setPastHero(event.nativeEvent.contentOffset.y > threshold),
+    [threshold],
+  );
+  const { scrollY, onScroll, stretchStyle } = useStretchyHeader(
+    HERO_HEIGHT + insets.top,
+    onScrollPosition,
+  );
+
+  const header = (
+    <StoresHeader
+      search={search}
+      onSearchChange={setSearch}
+      searching={searching}
+      origin={origin}
+      nearby={{ stores: nearby.data, loading: nearby.isLoading }}
+      describe={describe}
+      onOpenStore={openStore}
+      listTitle={searching ? t('stores.results') : t('stores.all')}
+      listCount={total !== undefined ? t('stores.count', { count: total }) : null}
+      sortControl={sortControl}
+      heroStretchStyle={stretchStyle}
+    />
   );
 
   return (

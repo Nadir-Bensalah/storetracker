@@ -2,7 +2,14 @@ import { Image } from 'expo-image';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import {
+  Animated as RNAnimated,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import Animated, { FadeInRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { languageNames, languages } from '@/i18n/resources';
@@ -15,17 +22,20 @@ import { Button } from '@/ui/Button';
 import { ChoiceList } from '@/ui/ChoiceList';
 import { Icon, type IconName } from '@/ui/Icon';
 import { Text } from '@/ui/Text';
+import { useStretchyHeader } from '@/ui/useStretchyHeader';
 
 import { Wordmark } from './Wordmark';
 
-const streetPhoto = require('../../../assets/images/onboarding.webp');
+const streetPhoto = require('../../../assets/images/onboarding-street.webp');
 
 export function OnboardingScreen() {
   const [step, setStep] = useState<'language' | 'location'>('language');
   return step === 'language' ? (
     <LanguageStep onContinue={() => setStep('location')} />
   ) : (
-    <LocationStep />
+    <Animated.View entering={FadeInRight.duration(300)} style={styles.screen}>
+      <LocationStep />
+    </Animated.View>
   );
 }
 
@@ -36,23 +46,29 @@ function LanguageStep({ onContinue }: { onContinue: () => void }) {
   const { height } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const language = useAppSelector((state) => state.preferences.language);
+  const photoHeight = Math.max(260, height * 0.48);
+  const { onScroll, stretchStyle } = useStretchyHeader(photoHeight);
 
   return (
-    <ScrollView
+    <RNAnimated.ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[
         styles.languageContent,
         { paddingBottom: insets.bottom + spacing.lg },
       ]}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
     >
       <StatusBar style="light" />
-      <View style={{ height: Math.max(260, height * 0.48) }}>
-        <Image
-          source={streetPhoto}
-          style={StyleSheet.absoluteFill}
-          contentFit="cover"
-          accessible={false}
-        />
+      <View style={{ height: photoHeight }}>
+        <RNAnimated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
+          <Image
+            source={streetPhoto}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+            accessible={false}
+          />
+        </RNAnimated.View>
         <View style={styles.topScrim} />
         <View style={[styles.photoFade, fade(colors.background)]} />
         <View style={[styles.wordmarkOnPhoto, { top: insets.top + spacing.lg }]}>
@@ -77,7 +93,7 @@ function LanguageStep({ onContinue }: { onContinue: () => void }) {
           {t('onboarding.step', { current: 1, total: 2 })}
         </Text>
       </View>
-    </ScrollView>
+    </RNAnimated.ScrollView>
   );
 }
 
@@ -156,6 +172,7 @@ function LocationStep() {
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1 },
   languageContent: { flexGrow: 1 },
   topScrim: {
     position: 'absolute',

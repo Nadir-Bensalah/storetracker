@@ -1,7 +1,8 @@
 import { router, Stack } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 import { shallowEqual } from 'react-redux';
 
 import { distanceInMeters } from '@/features/stores/distance';
@@ -84,8 +85,9 @@ export function FavoritesScreen() {
           ),
         }}
       />
-      <FlatList
+      <Animated.FlatList
         data={favorites}
+        itemLayoutAnimation={LinearTransition.duration(240)}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         contentInsetAdjustmentBehavior="automatic"

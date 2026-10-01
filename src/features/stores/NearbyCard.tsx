@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { memo } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { FavoriteButton } from '@/features/favorites/FavoriteButton';
 import { radius, spacing } from '@/theme/tokens';
@@ -31,7 +32,10 @@ export const NearbyCard = memo(function NearbyCard({
   const photo = store.photos[0];
 
   return (
-    <View style={[styles.card, { width, backgroundColor: colors.skeleton }]}>
+    <Animated.View
+      entering={FadeIn.duration(260)}
+      style={[styles.card, { width, backgroundColor: colors.skeleton }]}
+    >
       <Pressable
         onPress={() => onPress(store)}
         accessibilityRole="button"
@@ -64,7 +68,7 @@ export const NearbyCard = memo(function NearbyCard({
       <View style={styles.favorite}>
         <FavoriteButton store={store} color="#FFFFFF" size={20} />
       </View>
-    </View>
+    </Animated.View>
   );
 });
 

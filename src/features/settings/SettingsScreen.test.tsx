@@ -25,4 +25,15 @@ describe('SettingsScreen', () => {
     expect(store.getState().preferences.appearance).toBe('dark');
     expect(screen.getByRole('radio', { name: 'Sombre' })).toBeChecked();
   });
+
+  it('shows the location permission state with the matching action', async () => {
+    await renderWithStore(<SettingsScreen />, {
+      location: { permission: 'blocked', servicesEnabled: true, coordinates: null, status: 'idle' },
+    });
+
+    expect(
+      screen.getByLabelText('Accès à la position, Refusée dans les réglages'),
+    ).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Ouvrir les réglages' })).toBeOnTheScreen();
+  });
 });

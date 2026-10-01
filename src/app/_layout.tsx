@@ -70,14 +70,12 @@ function RootNavigator() {
         <Stack.Protected guard={onboardingCompleted}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
-            name="settings"
-            options={{
-              presentation: 'formSheet',
-              sheetAllowedDetents: [0.75, 1],
-              sheetGrabberVisible: true,
-              contentStyle: { backgroundColor: colors.background },
-            }}
+            name="store-map/[id]"
+            options={{ presentation: 'modal', headerShown: true, headerShadowVisible: false }}
           />
+          {/* A page sheet on iOS, a full-screen modal on Android, each with its
+              own native stack for the About pages. */}
+          <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
         </Stack.Protected>
         <Stack.Protected guard={!onboardingCompleted}>
           <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
