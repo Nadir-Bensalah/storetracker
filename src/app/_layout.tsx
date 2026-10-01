@@ -6,7 +6,9 @@ import { Appearance } from 'react-native';
 import { Provider } from 'react-redux';
 
 import i18n, { initI18n } from '@/i18n';
+import { locationRefreshed } from '@/features/location/locationSlice';
 import { store } from '@/store';
+import { startAppListeners } from '@/store/appListeners';
 import { useAppSelector } from '@/store/hooks';
 import { useTheme } from '@/theme/useTheme';
 
@@ -16,6 +18,8 @@ SplashScreen.setOptions({ fade: true, duration: 200 });
 const { language, appearance } = store.getState().preferences;
 initI18n(language);
 Appearance.setColorScheme(appearance === 'system' ? 'unspecified' : appearance);
+startAppListeners(store);
+store.dispatch(locationRefreshed());
 
 export default function RootLayout() {
   return (

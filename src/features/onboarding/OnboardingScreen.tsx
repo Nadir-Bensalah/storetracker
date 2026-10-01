@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { languageNames, languages } from '@/i18n/resources';
+import { locationRequested } from '@/features/location/locationSlice';
 import { languageChanged, onboardingCompleted } from '@/features/settings/preferencesSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { spacing } from '@/theme/tokens';
@@ -91,6 +92,10 @@ function LocationStep() {
   const dispatch = useAppDispatch();
 
   const finish = () => dispatch(onboardingCompleted());
+  const allow = async () => {
+    await dispatch(locationRequested());
+    finish();
+  };
 
   const features: { icon: IconName; title: string; body: string }[] = [
     {
@@ -137,7 +142,7 @@ function LocationStep() {
         ))}
       </View>
       <View style={styles.actions}>
-        <Button title={t('onboarding.allowLocation')} icon="location" onPress={finish} />
+        <Button title={t('onboarding.allowLocation')} icon="location" onPress={allow} />
         <Button title={t('common.later')} variant="secondary" onPress={finish} />
       </View>
       <View style={styles.privacy}>

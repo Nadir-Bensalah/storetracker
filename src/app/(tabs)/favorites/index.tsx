@@ -1,12 +1,1 @@
-import { Stack } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
-
-export default function Screen() {
-  const { t } = useTranslation();
-  return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <Stack.Screen options={{ title: t('favorites.title'), headerLargeTitle: true }} />
-    </ScrollView>
-  );
-}
+export { FavoritesScreen as default } from '@/features/favorites/FavoritesScreen';
