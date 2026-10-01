@@ -2,13 +2,7 @@ import { Image } from 'expo-image';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StatusBar } from 'expo-status-bar';
-import {
-  Animated as RNAnimated,
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -47,28 +41,28 @@ function LanguageStep({ onContinue }: { onContinue: () => void }) {
   const dispatch = useAppDispatch();
   const language = useAppSelector((state) => state.preferences.language);
   const photoHeight = Math.max(260, height * 0.48);
-  const { onScroll, stretchStyle } = useStretchyHeader(photoHeight);
+  const { scrollHandler, stretchStyle } = useStretchyHeader(photoHeight);
 
   return (
-    <RNAnimated.ScrollView
+    <Animated.ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[
         styles.languageContent,
         { paddingBottom: insets.bottom + spacing.lg },
       ]}
-      onScroll={onScroll}
+      onScroll={scrollHandler}
       scrollEventThrottle={16}
     >
       <StatusBar style="light" />
       <View style={{ height: photoHeight }}>
-        <RNAnimated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
+        <Animated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
           <Image
             source={streetPhoto}
             style={StyleSheet.absoluteFill}
             contentFit="cover"
             accessible={false}
           />
-        </RNAnimated.View>
+        </Animated.View>
         <View style={styles.topScrim} />
         <View style={[styles.photoFade, fade(colors.background)]} />
         <View style={[styles.wordmarkOnPhoto, { top: insets.top + spacing.lg }]}>
@@ -93,7 +87,7 @@ function LanguageStep({ onContinue }: { onContinue: () => void }) {
           {t('onboarding.step', { current: 1, total: 2 })}
         </Text>
       </View>
-    </RNAnimated.ScrollView>
+    </Animated.ScrollView>
   );
 }
 

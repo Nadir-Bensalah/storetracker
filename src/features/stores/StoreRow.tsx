@@ -12,6 +12,7 @@ import { Text } from '@/ui/Text';
 
 import { knownPhotos, photos } from './data/photos';
 import { StatusLine } from './StatusLine';
+import { StoreLink } from './StoreLink';
 import type { Store } from './types';
 import type { StatusTone } from './useOpeningStatusLabel';
 
@@ -19,18 +20,13 @@ export interface StoreRowProps {
   store: Store;
   status: { label: string; tone: StatusTone };
   distance?: string;
-  onPress: (store: Store) => void;
+  tab: 'stores' | 'favorites';
 }
 
-// Memoised because the list re-renders on every keystroke and every new page;
+// Memoised because the list re-renders on every new page and every minute;
 // each row receives stable props (callbacks from useCallback, a status string
 // that only changes once a minute), so only rows whose data changed re-render.
-export const StoreRow = memo(function StoreRow({
-  store,
-  status,
-  distance,
-  onPress,
-}: StoreRowProps) {
+export const StoreRow = memo(function StoreRow({ store, status, distance, tab }: StoreRowProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const services = store.services.slice(0, 2).map((service) => t(`services.${service}`));
@@ -43,40 +39,44 @@ export const StoreRow = memo(function StoreRow({
       layout={LinearTransition.duration(240)}
       style={styles.row}
     >
-      <Pressable
-        onPress={() => onPress(store)}
-        accessibilityRole="button"
-        accessibilityLabel={[store.name, `${store.street}, ${store.city}`, status.label, distance]
-          .filter(Boolean)
-          .join(', ')}
-        android_ripple={{ color: colors.pressed }}
-        style={({ pressed }) => [styles.main, pressed && Platform.OS === 'ios' && { opacity: 0.6 }]}
-      >
-        {photo ? (
-          <Image
-            source={photos[photo].thumb}
-            style={[styles.thumb, { backgroundColor: colors.skeleton }]}
-            contentFit="cover"
-            recyclingKey={store.id}
-            accessible={false}
-          />
-        ) : null}
-        <View style={styles.text}>
-          <Text variant="bodyStrong" numberOfLines={2}>
-            {store.name}
-          </Text>
-          <Text variant="footnote" color="textSecondary" numberOfLines={1}>
-            {`${store.street}, ${store.postalCode} ${store.city}`}
-          </Text>
-          <StatusLine label={status.label} tone={status.tone} distance={distance} />
-          <Text variant="footnote" color="textTertiary" numberOfLines={1}>
-            {services.join('  ·  ')}
-          </Text>
-        </View>
-        {Platform.OS === 'ios' ? (
-          <Icon name="chevron" color={colors.textTertiary} size={13} />
-        ) : null}
-      </Pressable>
+      <StoreLink store={store} tab={tab}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={[store.name, `${store.street}, ${store.city}`, status.label, distance]
+            .filter(Boolean)
+            .join(', ')}
+          android_ripple={{ color: colors.pressed }}
+          style={({ pressed }) => [
+            styles.main,
+            pressed && Platform.OS === 'ios' && { opacity: 0.6 },
+          ]}
+        >
+          {photo ? (
+            <Image
+              source={photos[photo].thumb}
+              style={[styles.thumb, { backgroundColor: colors.skeleton }]}
+              contentFit="cover"
+              recyclingKey={store.id}
+              accessible={false}
+            />
+          ) : null}
+          <View style={styles.text}>
+            <Text variant="bodyStrong" numberOfLines={2}>
+              {store.name}
+            </Text>
+            <Text variant="footnote" color="textSecondary" numberOfLines={1}>
+              {`${store.street}, ${store.postalCode} ${store.city}`}
+            </Text>
+            <StatusLine label={status.label} tone={status.tone} distance={distance} />
+            <Text variant="footnote" color="textTertiary" numberOfLines={1}>
+              {services.join('  ·  ')}
+            </Text>
+          </View>
+          {Platform.OS === 'ios' ? (
+            <Icon name="chevron" color={colors.textTertiary} size={13} />
+          ) : null}
+        </Pressable>
+      </StoreLink>
       <FavoriteButton store={store} />
     </Animated.View>
   );

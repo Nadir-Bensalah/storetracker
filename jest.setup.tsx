@@ -26,14 +26,66 @@ jest.mock('react-native-mmkv', () => ({
 }));
 
 jest.mock('expo-router', () => {
-  const { View } = require('react-native');
+  const React = require('react');
+  const router = { push: jest.fn(), back: jest.fn(), navigate: jest.fn(), dismiss: jest.fn() };
+  // The link navigates on press, like the real one; preview and menu are iOS-only chrome.
+  const Link = ({
+    href,
+    onPress,
+    children,
+  }: {
+    href: string;
+    onPress?: () => void;
+    children: React.ReactNode;
+  }) => {
+    const trigger = React.Children.toArray(children)
+      .filter((child: React.ReactNode): child is React.ReactElement => React.isValidElement(child))
+      .find((child: React.ReactElement) => child.type === Link.Trigger) as
+      React.ReactElement<{ children: React.ReactElement<{ onPress?: () => void }> }> | undefined;
+    if (!trigger) return null;
+    return React.cloneElement(trigger.props.children, {
+      onPress: () => {
+        onPress?.();
+        router.push(href);
+      },
+    });
+  };
+  Link.Trigger = function LinkTrigger({ children }: { children: React.ReactNode }) {
+    return children;
+  };
+  Link.Preview = function LinkPreview() {
+    return null;
+  };
+  Link.Menu = function LinkMenu() {
+    return null;
+  };
+  Link.MenuAction = function LinkMenuAction() {
+    return null;
+  };
   return {
-    router: { push: jest.fn(), back: jest.fn(), navigate: jest.fn() },
+    router,
     Stack: { Screen: () => null },
     useLocalSearchParams: jest.fn(() => ({})),
-    Link: View,
+    Link,
   };
 });
+
+jest.mock('expo-haptics', () => ({
+  selectionAsync: jest.fn(async () => {}),
+  impactAsync: jest.fn(async () => {}),
+  performAndroidHapticsAsync: jest.fn(async () => {}),
+  ImpactFeedbackStyle: { Light: 'light', Soft: 'soft' },
+  AndroidHaptics: { Toggle_On: 'toggle_on', Toggle_Off: 'toggle_off' },
+}));
+jest.mock('expo-glass-effect', () => ({
+  GlassView: () => null,
+  isLiquidGlassAvailable: () => false,
+}));
+jest.mock('expo-blur', () => {
+  const { View } = require('react-native');
+  return { BlurView: View };
+});
+jest.mock('expo-web-browser', () => ({ openBrowserAsync: jest.fn(async () => ({})) }));
 
 jest.mock('react-native-maps', () => {
   const { View } = require('react-native');

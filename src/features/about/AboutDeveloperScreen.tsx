@@ -18,7 +18,7 @@ const openPage = (url: string) => WebBrowser.openBrowserAsync(url);
 export function AboutDeveloperScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { apps, email, linkedInUrl, gitHubUrl, websiteUrl } = developer;
+  const { apps, email, linkedInUrl, gitHubUrl, websiteUrl, publishedAppsCount } = developer;
 
   const links = [
     apps.length > 0 && { title: t('about.apps'), onPress: () => router.push('/settings/apps') },
@@ -39,16 +39,31 @@ export function AboutDeveloperScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <View style={styles.identity}>
-        <Text variant="title" accessibilityRole="header">
-          {developer.name}
-        </Text>
-        <Text color="textSecondary">{t('about.role')}</Text>
-        {apps.length > 0 ? (
-          <Text variant="subhead" color="textSecondary">
-            {t('about.publishedApps', { count: apps.length })}
+        <View
+          style={[styles.monogram, { backgroundColor: colors.accent }]}
+          accessible={false}
+          importantForAccessibility="no"
+        >
+          <Text variant="title" color="onAccent">
+            {developer.initials}
           </Text>
-        ) : null}
+        </View>
+        <View style={styles.identityText}>
+          <Text variant="title" accessibilityRole="header">
+            {developer.name}
+          </Text>
+          <Text color="textSecondary">{t('about.role')}</Text>
+        </View>
       </View>
+
+      <Group>
+        <ListRow first title={t('about.publishedApps')} value={String(publishedAppsCount)} />
+        <ListRow title={t('about.stackLabel')} value={t('about.stack')} />
+      </Group>
+
+      <Text variant="subhead" color="textSecondary">
+        {t('about.thisProject')}
+      </Text>
 
       {links.length > 0 ? (
         <Section title={t('about.links')}>
@@ -65,5 +80,13 @@ export function AboutDeveloperScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.xl },
-  identity: { gap: spacing.xs },
+  identity: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
+  identityText: { flex: 1, gap: spacing.xxs },
+  monogram: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

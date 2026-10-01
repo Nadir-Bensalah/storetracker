@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Animated,
   FlatList,
   Linking,
   Platform,
@@ -33,7 +32,7 @@ import { StateView } from '@/ui/StateView';
 import { Text } from '@/ui/Text';
 import { useStretchyHeader } from '@/ui/useStretchyHeader';
 
-import { useGetStoreQuery } from './api/storesApi';
+import { selectListedStore, useGetStoreQuery } from './api/storesApi';
 import { knownPhotos, photos } from './data/photos';
 import { directionsUrl } from './directions';
 import { distanceInMeters } from './distance';
@@ -56,10 +55,12 @@ export function StoreDetailScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const favorite = useAppSelector((state) => selectFavorite(state, id));
+  const listed = useAppSelector((state) => selectListedStore(state, id));
   const { data, error, isLoading, refetch } = useGetStoreQuery(id);
 
-  // A favorite's snapshot keeps the screen usable offline.
-  const store = data ?? favorite;
+  // The store is usually already in a list cache, so the screen (and its iOS
+  // preview) renders at once; a favorite's snapshot keeps it usable offline.
+  const store = data ?? listed ?? favorite;
   const offlineSnapshot = !data && !!favorite && !!error;
 
   return (
@@ -141,7 +142,7 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
     : undefined;
   const address = `${store.street}, ${store.postalCode} ${store.city}`;
   const photoHeight = Math.round(Math.min(width * 0.8, 420));
-  const { onScroll, stretchStyle } = useStretchyHeader(photoHeight);
+  const { scrollHandler, stretchStyle } = useStretchyHeader(photoHeight);
 
   const onScrollPhotos = useCallback(
     (event: { nativeEvent: { contentOffset: { x: number } } }) =>
@@ -152,14 +153,14 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
   return (
     <>
       <StatusBar style="light" />
-      <Animated.ScrollView
+      <Reanimated.ScrollView
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xl }}
-        onScroll={onScroll}
+        onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
         <View style={{ height: photoHeight }}>
-          <Animated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
+          <Reanimated.View style={[StyleSheet.absoluteFill, stretchStyle]}>
             <FlatList
               data={gallery}
               horizontal
@@ -177,7 +178,7 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
               )}
             />
             <View style={styles.photoScrim} pointerEvents="none" />
-          </Animated.View>
+          </Reanimated.View>
           {gallery.length > 1 ? (
             <View style={[styles.photoCounter, { backgroundColor: colors.scrim }]}>
               <Text
@@ -219,7 +220,8 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
             </View>
             <View style={styles.action}>
               <Button
-                title={t('detail.call')}
+                title={t('detail.callShort')}
+                accessibilityLabel={t('detail.call')}
                 icon="phone"
                 onPress={() => Linking.openURL(`tel:${store.phone.replace(/\s/g, '')}`)}
               />
@@ -277,7 +279,7 @@ function StoreDetail({ store, offlineSnapshot }: { store: Store; offlineSnapshot
             />
           </View>
         </Reanimated.View>
-      </Animated.ScrollView>
+      </Reanimated.ScrollView>
     </>
   );
 }

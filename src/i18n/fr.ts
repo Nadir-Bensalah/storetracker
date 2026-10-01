@@ -36,6 +36,8 @@ export const fr = {
     heroSubtitle: 'Les boutiques autour de vous, leurs horaires et leurs services.',
     searchPlaceholder: 'Rechercher un magasin, une ville…',
     searchLabel: 'Rechercher un magasin',
+    searchHint: 'Tapez le nom d’une enseigne ou d’une ville.',
+    mapHint: 'Ouvre la carte en plein écran',
     clearSearch: 'Effacer la recherche',
     nearby: 'Autour de vous',
     nearbyEmpty: 'Aucun magasin à moins de 30 km.',
@@ -104,7 +106,10 @@ export const fr = {
     openMap: 'Agrandir la carte : {{address}}',
   },
   map: {
+    driving: 'environ {{distance}} en voiture · {{minutes}} min',
     estimate: '{{distance}} à vol d’oiseau · environ {{minutes}} min à pied',
+    nearbyCount_one: '{{count}} magasin à moins de 30 km',
+    nearbyCount_other: '{{count}} magasins à moins de 30 km',
     noLocation: 'Activez la localisation pour voir le trajet depuis votre position.',
     openInMaps: 'Ouvrir l’itinéraire',
     openInAppleMaps: 'Itinéraire dans Plans',
@@ -135,10 +140,17 @@ export const fr = {
   },
   offline: {
     banner: 'Hors connexion',
+    stillOffline: 'Toujours hors connexion',
+    backOnline: 'Connexion rétablie',
   },
   about: {
     developerTitle: 'À propos du développeur',
     role: 'Développeur React Native, iOS et Android',
+    stack: 'React Native, Expo, TypeScript, Swift et Kotlin',
+    stackLabel: 'Technologies',
+    publishedApps: 'Applications publiées',
+    thisProject:
+      'StoreTracker a été conçu et livré en 48 heures pour le processus de recrutement WSHOP.',
     publishedApps_one: '{{count}} application publiée',
     publishedApps_other: '{{count}} applications publiées',
     links: 'Liens',

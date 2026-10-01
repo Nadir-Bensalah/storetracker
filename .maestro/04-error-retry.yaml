@@ -15,6 +15,7 @@ name: Error and retry
     id: 'simulate-api-failure'
 - tapOn: 'Close'
 - tapOn: 'Search a store'
+- waitForAnimationToEnd
 - inputText: 'Rambert'
 - hideKeyboard
 - assertVisible: 'Couldn’t load the stores'

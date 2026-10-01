@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Animated,
   FlatList,
   Pressable,
   StyleSheet,
@@ -11,13 +10,13 @@ import {
   View,
   type ViewStyle,
 } from 'react-native';
-import Reanimated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Reanimated, { type AnimatedStyle, FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LocationPrompt } from '@/features/location/LocationPrompt';
 import { StoreMap } from '@/features/map/StoreMap';
 import type { Coordinates, Store } from '@/features/stores/types';
-import { minTouchTarget, spacing } from '@/theme/tokens';
+import { minTouchTarget, radius, spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { OfflineBanner } from '@/ui/OfflineBanner';
@@ -25,7 +24,6 @@ import { Skeleton, SkeletonGroup } from '@/ui/Skeleton';
 import { Text } from '@/ui/Text';
 
 import { NearbyCard } from './NearbyCard';
-import { SearchField } from './SearchField';
 import type { StatusTone } from './useOpeningStatusLabel';
 
 const heroPhoto = require('../../../assets/images/onboarding-street.webp');
@@ -33,27 +31,19 @@ const heroPhoto = require('../../../assets/images/onboarding-street.webp');
 export const HERO_HEIGHT = 300;
 
 interface StoresHeaderProps {
-  search: string;
-  onSearchChange: (text: string) => void;
-  searching: boolean;
   origin: Coordinates | null;
   nearby: { stores: Store[] | undefined; loading: boolean };
   describe: (store: Store) => { status: { label: string; tone: StatusTone }; distance?: string };
-  onOpenStore: (store: Store) => void;
   listTitle: string;
   listCount: string | null;
   sortControl: React.ReactNode;
-  heroStretchStyle?: Animated.WithAnimatedValue<ViewStyle>;
+  heroStretchStyle?: AnimatedStyle<ViewStyle>;
 }
 
 export function StoresHeader({
-  search,
-  onSearchChange,
-  searching,
   origin,
   nearby,
   describe,
-  onOpenStore,
   listTitle,
   listCount,
   sortControl,
@@ -67,9 +57,9 @@ export function StoresHeader({
 
   const renderNearby = useCallback(
     ({ item }: { item: Store }) => (
-      <NearbyCard store={item} width={cardWidth} onPress={onOpenStore} {...describe(item)} />
+      <NearbyCard store={item} width={cardWidth} tab="stores" {...describe(item)} />
     ),
-    [cardWidth, onOpenStore, describe],
+    [cardWidth, describe],
   );
 
   return (
@@ -121,25 +111,46 @@ export function StoresHeader({
       </View>
 
       <View style={styles.searchWrapper}>
-        <SearchField value={search} onChangeText={onSearchChange} />
+        <Pressable
+          onPress={() => router.push('/stores/search')}
+          accessibilityRole="button"
+          accessibilityLabel={t('stores.searchLabel')}
+          style={({ pressed }) => [
+            styles.searchField,
+            { backgroundColor: colors.surfaceElevated },
+            pressed && { opacity: 0.85 },
+          ]}
+        >
+          <Icon name="search" color={colors.textSecondary} size={18} />
+          <Text color="textTertiary" numberOfLines={1}>
+            {t('stores.searchPlaceholder')}
+          </Text>
+        </Pressable>
       </View>
 
       <OfflineBanner />
 
-      {searching ? null : origin ? (
+      {origin ? (
         <Reanimated.View
           entering={FadeIn.duration(220)}
           exiting={FadeOut.duration(160)}
           style={styles.section}
         >
           <View style={styles.padded}>
-            <StoreMap
-              stores={nearby.stores ?? []}
-              center={origin}
-              span={0.03}
-              showsUserLocation
+            <Pressable
+              onPress={() => router.push('/store-map/nearby')}
+              accessibilityRole="button"
               accessibilityLabel={t('stores.mapLabel')}
-            />
+              accessibilityHint={t('stores.mapHint')}
+            >
+              <StoreMap
+                stores={nearby.stores ?? []}
+                center={origin}
+                span={0.03}
+                showsUserLocation
+                accessibilityLabel={t('stores.mapLabel')}
+              />
+            </Pressable>
           </View>
           <SectionTitle
             title={t('stores.nearby')}
@@ -239,6 +250,14 @@ const styles = StyleSheet.create({
   heroText: { gap: spacing.xs },
   heroTitle: { fontSize: 40, lineHeight: 44 },
   heroSubtitle: { opacity: 0.92, maxWidth: 360 },
+  searchField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: minTouchTarget + 6,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.lg,
+  },
   searchWrapper: {
     marginTop: -(minTouchTarget / 2 + spacing.md),
     paddingHorizontal: spacing.lg,

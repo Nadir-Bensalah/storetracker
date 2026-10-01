@@ -40,3 +40,22 @@ export const storesApi = createApi({
 });
 
 export const { useGetStoresInfiniteQuery, useGetNearbyStoresQuery, useGetStoreQuery } = storesApi;
+
+type ApiState = { [storesApi.reducerPath]: ReturnType<typeof storesApi.reducer> };
+
+/** Finds a store in any cached list (paginated results or nearby), without a request. */
+export function selectListedStore(state: ApiState, id: string): Store | undefined {
+  for (const entry of Object.values(state[storesApi.reducerPath].queries)) {
+    const data = entry?.data;
+    if (!data) continue;
+    const items =
+      entry.endpointName === 'getStores'
+        ? (data as { pages: StoresPage[] }).pages.flatMap((page) => page.items)
+        : entry.endpointName === 'getNearbyStores'
+          ? (data as Store[])
+          : [];
+    const store = items.find((candidate) => candidate.id === id);
+    if (store) return store;
+  }
+  return undefined;
+}

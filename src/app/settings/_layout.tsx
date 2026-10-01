@@ -2,7 +2,7 @@ import { router, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet } from 'react-native';
 
-import { minTouchTarget } from '@/theme/tokens';
+import { minTouchTarget, spacing } from '@/theme/tokens';
 import { Text } from '@/ui/Text';
 
 export default function SettingsLayout() {
@@ -37,5 +37,5 @@ export default function SettingsLayout() {
 }
 
 const styles = StyleSheet.create({
-  close: { minHeight: minTouchTarget, justifyContent: 'center' },
+  close: { minHeight: minTouchTarget, justifyContent: 'center', paddingHorizontal: spacing.md },
 });

@@ -1,48 +1,34 @@
-import { useMemo, useState } from 'react';
-import { Animated, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import {
+  Extrapolation,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 /**
- * Pull-down "stretch" for a photo header. When an iOS scroll view bounces past
+ * Pull-down "stretch" for a photo header. When the scroll view bounces past
  * the top, the photo grows from its top edge instead of revealing a gap.
- * Android 12+ applies its own native overscroll stretch, so nothing is needed there.
- * Runs on the native driver: no JS work per frame.
+ * Everything runs on the UI thread: no JS work per frame.
  */
-export function useStretchyHeader(
-  height: number,
-  listener?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void,
-) {
-  const [scrollY] = useState(() => new Animated.Value(0));
+export function useStretchyHeader(height: number) {
+  const scrollY = useSharedValue(0);
 
-  const onScroll = useMemo(
-    () =>
-      Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-        useNativeDriver: true,
-        listener,
-      }),
-    [scrollY, listener],
-  );
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.set(event.contentOffset.y);
+  });
 
-  const stretchStyle = useMemo(
-    () => ({
+  const stretchStyle = useAnimatedStyle(() => {
+    const y = Math.min(scrollY.get(), 0);
+    // Scaling about the centre moves the top edge by half the growth; the
+    // translation covers the other half, so the top edge follows the finger.
+    return {
       transform: [
-        {
-          translateY: scrollY.interpolate({
-            inputRange: [-height, 0],
-            outputRange: [-height / 2, 0],
-            extrapolateRight: 'clamp',
-          }),
-        },
-        {
-          scale: scrollY.interpolate({
-            inputRange: [-height, 0],
-            outputRange: [2, 1],
-            extrapolateRight: 'clamp',
-          }),
-        },
+        { translateY: y / 2 },
+        { scale: interpolate(y, [-height, 0], [2, 1], Extrapolation.CLAMP) },
       ],
-    }),
-    [scrollY, height],
-  );
+    };
+  });
 
-  return { scrollY, onScroll, stretchStyle };
+  return { scrollY, scrollHandler, stretchStyle };
 }

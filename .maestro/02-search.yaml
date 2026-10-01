@@ -7,6 +7,7 @@ name: Search
     env:
       LOCATION: deny
 - tapOn: 'Search a store'
+- waitForAnimationToEnd
 - inputText: 'Gautrand Lices'
 - assertVisible: 'Results'
 - assertVisible: '1 store'

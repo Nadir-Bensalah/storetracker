@@ -35,15 +35,6 @@ describe('StoresScreen', () => {
     await waitFor(() => expect(loadedStores()).toHaveLength(PAGE_SIZE * 2));
   });
 
-  it('filters by name after the debounce, and explains an empty result', async () => {
-    await renderWithStore(<StoresScreen />);
-    await screen.findByText('Fauvel Abbesses');
-
-    await fireEvent.changeText(screen.getByLabelText('Rechercher un magasin'), 'zzz');
-
-    expect(await screen.findByText('Aucun résultat pour « zzz »')).toBeOnTheScreen();
-  });
-
   it('offers a retry when the API fails, and recovers', async () => {
     mockServerConfig.errorRate = 1;
     await renderWithStore(<StoresScreen />);
@@ -56,20 +47,15 @@ describe('StoresScreen', () => {
     expect(await screen.findByText('Fauvel Abbesses')).toBeOnTheScreen();
   });
 
-  it('does not pass the previous results off as those of a search that failed', async () => {
-    await renderWithStore(<StoresScreen />);
-    await screen.findByText('Fauvel Abbesses');
-
-    mockServerConfig.errorRate = 1;
-    await fireEvent.changeText(screen.getByLabelText('Rechercher un magasin'), 'Rambert');
-
-    expect(await screen.findByText('Impossible de charger les magasins')).toBeOnTheScreen();
-    expect(screen.queryByText('Fauvel Abbesses')).toBeNull();
-  });
-
   it('opens the detail of the pressed store', async () => {
     await renderWithStore(<StoresScreen />);
     await fireEvent.press(await screen.findByRole('button', { name: /^Fauvel Abbesses/ }));
     await waitFor(() => expect(router.push).toHaveBeenCalledWith('/stores/21'));
+  });
+
+  it('opens the search screen from the hero', async () => {
+    await renderWithStore(<StoresScreen />);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Rechercher un magasin' }));
+    expect(router.push).toHaveBeenCalledWith('/stores/search');
   });
 });

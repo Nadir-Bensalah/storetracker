@@ -10,6 +10,7 @@ import { Text } from '@/ui/Text';
 
 import { knownPhotos, photos } from './data/photos';
 import { StatusLine } from './StatusLine';
+import { StoreLink } from './StoreLink';
 import type { Store } from './types';
 import type { StatusTone } from './useOpeningStatusLabel';
 
@@ -18,7 +19,7 @@ interface NearbyCardProps {
   width: number;
   status: { label: string; tone: StatusTone };
   distance?: string;
-  onPress: (store: Store) => void;
+  tab: 'stores';
 }
 
 export const NearbyCard = memo(function NearbyCard({
@@ -26,7 +27,7 @@ export const NearbyCard = memo(function NearbyCard({
   width,
   status,
   distance,
-  onPress,
+  tab,
 }: NearbyCardProps) {
   const { colors } = useTheme();
   const photo = knownPhotos(store.photos)[0];
@@ -36,35 +37,36 @@ export const NearbyCard = memo(function NearbyCard({
       entering={FadeIn.duration(260)}
       style={[styles.card, { width, backgroundColor: colors.skeleton }]}
     >
-      <Pressable
-        onPress={() => onPress(store)}
-        accessibilityRole="button"
-        accessibilityLabel={[store.name, status.label, distance].filter(Boolean).join(', ')}
-        android_ripple={{ color: 'rgba(255,255,255,0.15)', foreground: true }}
-        style={({ pressed }) => [
-          styles.fill,
-          pressed && Platform.OS === 'ios' && { opacity: 0.85 },
-        ]}
-      >
-        {photo ? (
-          <Image
-            source={photos[photo].thumb}
-            style={StyleSheet.absoluteFill}
-            contentFit="cover"
-            accessible={false}
-          />
-        ) : null}
-        <View style={styles.scrim} />
-        <View style={styles.text}>
-          <Text variant="bodyStrong" color="onScrim" numberOfLines={1}>
-            {store.name}
-          </Text>
-          <Text variant="footnote" color="onScrim" numberOfLines={1} style={styles.secondary}>
-            {distance ? `${store.city}  ·  ${distance}` : store.city}
-          </Text>
-          <StatusLine label={status.label} tone={status.tone} onPhoto />
-        </View>
-      </Pressable>
+      <StoreLink store={store} tab={tab}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={[store.name, status.label, distance].filter(Boolean).join(', ')}
+          android_ripple={{ color: 'rgba(255,255,255,0.15)', foreground: true }}
+          style={({ pressed }) => [
+            styles.fill,
+            pressed && Platform.OS === 'ios' && { opacity: 0.85 },
+          ]}
+        >
+          {photo ? (
+            <Image
+              source={photos[photo].thumb}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              accessible={false}
+            />
+          ) : null}
+          <View style={styles.scrim} />
+          <View style={styles.text}>
+            <Text variant="bodyStrong" color="onScrim" numberOfLines={1}>
+              {store.name}
+            </Text>
+            <Text variant="footnote" color="onScrim" numberOfLines={1} style={styles.secondary}>
+              {distance ? `${store.city}  ·  ${distance}` : store.city}
+            </Text>
+            <StatusLine label={status.label} tone={status.tone} onPhoto />
+          </View>
+        </Pressable>
+      </StoreLink>
       <View style={styles.favorite}>
         <FavoriteButton store={store} color="#FFFFFF" size={20} />
       </View>

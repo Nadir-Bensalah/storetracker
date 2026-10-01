@@ -10,7 +10,6 @@ import { StoreRow } from '@/features/stores/StoreRow';
 import type { Store } from '@/features/stores/types';
 import { useNow } from '@/features/stores/useNow';
 import { useOpeningStatusLabel } from '@/features/stores/useOpeningStatusLabel';
-import { useOpenStore } from '@/features/stores/useOpenStore';
 import { formatDistance } from '@/i18n/format';
 import { useLocaleTag } from '@/i18n/useLanguage';
 import { useAppSelector } from '@/store/hooks';
@@ -29,7 +28,6 @@ export function FavoritesScreen() {
   const locale = useLocaleTag();
   const now = useNow();
   const statusLabel = useOpeningStatusLabel();
-  const openStore = useOpenStore('favorites');
   const origin = useAppSelector((state) => state.location.coordinates);
   const favorites = useAppSelector(
     (state) =>
@@ -43,14 +41,14 @@ export function FavoritesScreen() {
     ({ item }: { item: Store }) => (
       <StoreRow
         store={item}
-        onPress={openStore}
+        tab="favorites"
         status={statusLabel(item, now)}
         distance={
           origin ? formatDistance(distanceInMeters(origin, item.coordinates), locale) : undefined
         }
       />
     ),
-    [openStore, statusLabel, now, origin, locale],
+    [statusLabel, now, origin, locale],
   );
 
   const header = useMemo(

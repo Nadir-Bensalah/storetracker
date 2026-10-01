@@ -35,6 +35,8 @@ export const en: Translations = {
     heroSubtitle: 'The shops around you, their opening hours and services.',
     searchPlaceholder: 'Search a store or a city…',
     searchLabel: 'Search a store',
+    searchHint: 'Type a brand or a city.',
+    mapHint: 'Opens the map full screen',
     clearSearch: 'Clear search',
     nearby: 'Near you',
     nearbyEmpty: 'No store within 30 km.',
@@ -102,7 +104,10 @@ export const en: Translations = {
     openMap: 'Expand the map: {{address}}',
   },
   map: {
+    driving: 'about {{distance}} by car · {{minutes}} min',
     estimate: '{{distance}} as the crow flies · about {{minutes}} min on foot',
+    nearbyCount_one: '{{count}} store within 30 km',
+    nearbyCount_other: '{{count}} stores within 30 km',
     noLocation: 'Turn on location to see the way from where you are.',
     openInMaps: 'Get directions',
     openInAppleMaps: 'Directions in Maps',
@@ -132,10 +137,17 @@ export const en: Translations = {
   },
   offline: {
     banner: 'Offline',
+    stillOffline: 'Still offline',
+    backOnline: 'Back online',
   },
   about: {
     developerTitle: 'About the developer',
     role: 'React Native developer, iOS and Android',
+    stack: 'React Native, Expo, TypeScript, Swift and Kotlin',
+    stackLabel: 'Stack',
+    publishedApps: 'Published apps',
+    thisProject:
+      'StoreTracker was designed and delivered in 48 hours for the WSHOP hiring process.',
     publishedApps_one: '{{count}} published app',
     publishedApps_other: '{{count}} published apps',
     links: 'Links',

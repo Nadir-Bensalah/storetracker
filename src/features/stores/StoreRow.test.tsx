@@ -1,4 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react-native';
+import { router } from 'expo-router';
 
 import { selectIsFavorite } from '@/features/favorites/favoritesSlice';
 import { renderWithStore } from '@/test/render';
@@ -11,9 +12,7 @@ const status = { label: 'Ouvert jusqu’à 19:30', tone: 'success' as const };
 
 describe('StoreRow', () => {
   it('exposes one complete label to screen readers', async () => {
-    await renderWithStore(
-      <StoreRow store={store} status={status} distance="240 m" onPress={jest.fn()} />,
-    );
+    await renderWithStore(<StoreRow store={store} status={status} distance="240 m" tab="stores" />);
     expect(
       screen.getByRole('button', {
         name: 'Lestrade Opéra, 24 boulevard Haussmann, Paris, Ouvert jusqu’à 19:30, 240 m',
@@ -21,23 +20,22 @@ describe('StoreRow', () => {
     ).toBeOnTheScreen();
   });
 
-  it('opens the store it represents', async () => {
-    const onPress = jest.fn();
-    await renderWithStore(<StoreRow store={store} status={status} onPress={onPress} />);
+  it('opens the store it represents, in the tab it belongs to', async () => {
+    await renderWithStore(<StoreRow store={store} status={status} tab="favorites" />);
     await fireEvent.press(screen.getByRole('button', { name: /Lestrade Opéra/ }));
-    expect(onPress).toHaveBeenCalledWith(store);
+    expect(router.push).toHaveBeenCalledWith(`/favorites/${store.id}`);
   });
 
   it('toggles the favorite without opening the store', async () => {
-    const onPress = jest.fn();
+    jest.mocked(router.push).mockClear();
     const { store: appStore } = await renderWithStore(
-      <StoreRow store={store} status={status} onPress={onPress} />,
+      <StoreRow store={store} status={status} tab="stores" />,
     );
 
     await fireEvent.press(screen.getByRole('button', { name: 'Ajouter aux favoris' }));
 
     expect(selectIsFavorite(appStore.getState(), store.id)).toBe(true);
     expect(screen.getByRole('button', { name: 'Retirer des favoris' })).toBeSelected();
-    expect(onPress).not.toHaveBeenCalled();
+    expect(router.push).not.toHaveBeenCalled();
   });
 });

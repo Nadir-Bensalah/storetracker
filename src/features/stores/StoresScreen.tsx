@@ -1,21 +1,26 @@
+import { useNetInfo } from '@react-native-community/netinfo';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionSheetIOS,
   ActivityIndicator,
   Alert,
-  Animated,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
   Platform,
   Pressable,
   RefreshControl,
   StyleSheet,
   View,
 } from 'react-native';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  runOnJS,
+  useAnimatedReaction,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { formatDistance } from '@/i18n/format';
@@ -27,7 +32,7 @@ import { Icon } from '@/ui/Icon';
 import { SkeletonGroup } from '@/ui/Skeleton';
 import { StateView } from '@/ui/StateView';
 import { Text } from '@/ui/Text';
-import { useDebouncedValue } from '@/ui/useDebouncedValue';
+import { Toast, useToast } from '@/ui/Toast';
 import { useStretchyHeader } from '@/ui/useStretchyHeader';
 
 import { useGetNearbyStoresQuery, useGetStoresInfiniteQuery } from './api/storesApi';
@@ -38,9 +43,7 @@ import { StoreRowSkeleton } from './StoreRowSkeleton';
 import type { Store, StoreSort } from './types';
 import { useNow } from './useNow';
 import { useOpeningStatusLabel } from './useOpeningStatusLabel';
-import { useOpenStore } from './useOpenStore';
 
-const SEARCH_DEBOUNCE_MS = 300;
 const keyExtractor = (store: Store) => store.id;
 
 export function StoresScreen() {
@@ -50,17 +53,13 @@ export function StoresScreen() {
   const locale = useLocaleTag();
   const now = useNow();
   const statusLabel = useOpeningStatusLabel();
-  const openStore = useOpenStore('stores');
   const origin = useAppSelector((state) => state.location.coordinates);
+  const { toast, show: showToast } = useToast();
 
-  const [search, setSearch] = useState('');
   const [sort, setSort] = useState<StoreSort>('distance');
-  const debouncedSearch = useDebouncedValue(search.trim(), SEARCH_DEBOUNCE_MS);
-  const searching = debouncedSearch.length > 0;
-
   const query = useMemo(
-    () => ({ search: debouncedSearch, near: sort === 'distance' ? origin : null }),
-    [debouncedSearch, sort, origin],
+    () => ({ search: '', near: sort === 'distance' ? origin : null }),
+    [sort, origin],
   );
   const {
     data: lastData,
@@ -76,8 +75,8 @@ export function StoresScreen() {
   } = useGetStoresInfiniteQuery(query);
   const nearby = useGetNearbyStoresQuery(origin ?? skipToken);
 
-  // While a new search loads, the previous results stay on screen (`data`);
-  // if that search fails, they must not pass for its results.
+  // While a new sort loads, the previous results stay on screen (`data`);
+  // if that request fails, they must not pass for its results.
   const data = currentData ?? (isError ? undefined : lastData);
   const stores = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
   const total = data?.pages[0]?.total;
@@ -93,10 +92,8 @@ export function StoresScreen() {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: Store }) => (
-      <StoreRow store={item} onPress={openStore} {...describe(item)} />
-    ),
-    [describe, openStore],
+    ({ item }: { item: Store }) => <StoreRow store={item} tab="stores" {...describe(item)} />,
+    [describe],
   );
 
   const onEndReached = useCallback(() => {
@@ -109,6 +106,25 @@ export function StoresScreen() {
     await refetch();
     setRefreshing(false);
   }, [refetch]);
+
+  // Retry gives feedback either way: a spinner while it runs, then a toast.
+  const [retrying, setRetrying] = useState(false);
+  const retry = useCallback(async () => {
+    setRetrying(true);
+    const result = await refetch();
+    setRetrying(false);
+    if (result.isError) showToast(t('offline.stillOffline'), 'wifiOff');
+  }, [refetch, showToast, t]);
+
+  const { isConnected } = useNetInfo();
+  const wasOffline = useRef(false);
+  useEffect(() => {
+    if (isConnected === false) wasOffline.current = true;
+    if (isConnected === true && wasOffline.current) {
+      wasOffline.current = false;
+      showToast(t('offline.backOnline'), 'check');
+    }
+  }, [isConnected, showToast, t]);
 
   const chooseSort = useCallback(() => {
     const options: [StoreSort, string][] = [
@@ -152,7 +168,7 @@ export function StoresScreen() {
   ) : null;
 
   let empty: React.ReactElement | null = null;
-  if (isLoading || (isFetching && !data)) {
+  if (isLoading || (isFetching && !data && !retrying)) {
     empty = (
       <SkeletonGroup label={t('common.loading')}>
         {Array.from({ length: 6 }, (_, index) => (
@@ -167,15 +183,7 @@ export function StoresScreen() {
         icon={offline ? 'wifiOff' : 'warning'}
         title={offline ? t('stores.offlineTitle') : t('stores.errorTitle')}
         body={offline ? t('stores.offlineBody') : t('stores.errorBody')}
-        action={{ title: t('common.retry'), onPress: refetch }}
-      />
-    );
-  } else if (data && stores.length === 0) {
-    empty = (
-      <StateView
-        icon="search"
-        title={t('stores.emptySearchTitle', { search: debouncedSearch })}
-        body={t('stores.emptySearchBody')}
+        action={{ title: t('common.retry'), onPress: retry, loading: retrying }}
       />
     );
   }
@@ -214,28 +222,26 @@ export function StoresScreen() {
 
   // The status bar sits over the hero photo: light text there, then the
   // regular scheme once the photo has scrolled away under a solid strip.
-  const [pastHero, setPastHero] = useState(false);
   const threshold = HERO_HEIGHT - spacing.xxl;
-  const onScrollPosition = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) =>
-      setPastHero(event.nativeEvent.contentOffset.y > threshold),
+  const [pastHero, setPastHero] = useState(false);
+  const { scrollY, scrollHandler, stretchStyle } = useStretchyHeader(HERO_HEIGHT + insets.top);
+  useAnimatedReaction(
+    () => scrollY.get() > threshold,
+    (past, previous) => {
+      if (past !== previous) runOnJS(setPastHero)(past);
+    },
     [threshold],
   );
-  const { scrollY, onScroll, stretchStyle } = useStretchyHeader(
-    HERO_HEIGHT + insets.top,
-    onScrollPosition,
-  );
+  const statusStripStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.get(), [threshold - 40, threshold], [0, 1], Extrapolation.CLAMP),
+  }));
 
   const header = (
     <StoresHeader
-      search={search}
-      onSearchChange={setSearch}
-      searching={searching}
       origin={origin}
       nearby={{ stores: nearby.data, loading: nearby.isLoading }}
       describe={describe}
-      onOpenStore={openStore}
-      listTitle={searching ? t('stores.results') : t('stores.all')}
+      listTitle={t('stores.all')}
       listCount={total !== undefined ? t('stores.count', { count: total }) : null}
       sortControl={sortControl}
       heroStretchStyle={stretchStyle}
@@ -257,10 +263,8 @@ export function StoresScreen() {
         ItemSeparatorComponent={Separator}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
-        onScroll={onScroll}
+        onScroll={scrollHandler}
         scrollEventThrottle={16}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="handled"
         // The hero runs under the status bar; safe-area insets inside a tab
         // screen already include the tab bar, so they give the bottom padding.
         contentInsetAdjustmentBehavior="never"
@@ -277,17 +281,11 @@ export function StoresScreen() {
         pointerEvents="none"
         style={[
           styles.statusStrip,
-          {
-            height: insets.top,
-            backgroundColor: colors.background,
-            opacity: scrollY.interpolate({
-              inputRange: [threshold - 40, threshold],
-              outputRange: [0, 1],
-              extrapolate: 'clamp',
-            }),
-          },
+          { height: insets.top, backgroundColor: colors.background },
+          statusStripStyle,
         ]}
       />
+      <Toast toast={toast} />
     </View>
   );
 }

@@ -1,6 +1,6 @@
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { minTouchTarget, radius, spacing } from '@/theme/tokens';
+import { minTouchTarget, spacing } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
 import { Icon, type IconName } from './Icon';
@@ -12,6 +12,8 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary';
   icon?: IconName;
   disabled?: boolean;
+  /** Shows a spinner in place of the icon and blocks presses. */
+  loading?: boolean;
   accessibilityHint?: string;
   accessibilityLabel?: string;
 }
@@ -21,7 +23,8 @@ export function Button({
   onPress,
   variant = 'primary',
   icon,
-  disabled,
+  disabled = false,
+  loading = false,
   accessibilityHint,
   accessibilityLabel = title,
 }: ButtonProps) {
@@ -29,14 +32,15 @@ export function Button({
   const primary = variant === 'primary';
   const background = primary ? colors.accent : colors.surfaceMuted;
   const foreground = primary ? colors.onAccent : colors.textPrimary;
+  const inactive = disabled || loading;
 
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={inactive}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled: inactive, busy: loading }}
       accessibilityHint={accessibilityHint}
       android_ripple={{ color: colors.pressed }}
       style={({ pressed }) => [
@@ -46,8 +50,12 @@ export function Button({
       ]}
     >
       <View style={styles.content}>
-        {icon ? <Icon name={icon} color={foreground} size={18} /> : null}
-        <Text variant="bodyStrong" style={{ color: foreground }}>
+        {loading ? (
+          <ActivityIndicator color={foreground} />
+        ) : icon ? (
+          <Icon name={icon} color={foreground} size={18} />
+        ) : null}
+        <Text variant="bodyStrong" style={{ color: foreground }} numberOfLines={1}>
           {title}
         </Text>
       </View>
@@ -58,7 +66,7 @@ export function Button({
 const styles = StyleSheet.create({
   button: {
     minHeight: minTouchTarget + 8,
-    borderRadius: radius.md,
+    borderRadius: 999,
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,

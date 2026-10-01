@@ -11,7 +11,7 @@ interface StateViewProps {
   icon: IconName;
   title: string;
   body?: string;
-  action?: { title: string; onPress: () => void };
+  action?: { title: string; onPress: () => void; loading?: boolean };
 }
 
 /** Empty, error and offline states share one layout so they read consistently. */
@@ -30,7 +30,14 @@ export function StateView({ icon, title, body, action }: StateViewProps) {
           </Text>
         ) : null}
       </View>
-      {action ? <Button title={action.title} variant="secondary" onPress={action.onPress} /> : null}
+      {action ? (
+        <Button
+          title={action.title}
+          variant="secondary"
+          onPress={action.onPress}
+          loading={action.loading}
+        />
+      ) : null}
     </View>
   );
 }

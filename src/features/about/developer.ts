@@ -11,6 +11,8 @@ export interface PublishedApp {
 
 export const developer = {
   name: 'Nadir Ben Salah',
+  initials: 'NB',
+  publishedAppsCount: 8,
   email: null as string | null,
   linkedInUrl: null as string | null,
   gitHubUrl: null as string | null,
