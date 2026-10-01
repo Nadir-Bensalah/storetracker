@@ -22,7 +22,8 @@ describe('StoreRow', () => {
 
   it('opens the store it represents, in the tab it belongs to', async () => {
     await renderWithStore(<StoreRow store={store} status={status} tab="favorites" />);
-    await fireEvent.press(screen.getByRole('button', { name: /Lestrade Opéra/ }));
+    // The accessible element is the wrapper; the press lands on its content.
+    await fireEvent.press(screen.getByText('Lestrade Opéra'));
     expect(router.push).toHaveBeenCalledWith(`/favorites/${store.id}`);
   });
 

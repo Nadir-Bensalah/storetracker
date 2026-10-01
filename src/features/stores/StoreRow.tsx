@@ -39,12 +39,16 @@ export const StoreRow = memo(function StoreRow({ store, status, distance, tab }:
       layout={LinearTransition.duration(240)}
       style={styles.row}
     >
-      <StoreLink store={store} tab={tab}>
+      <StoreLink
+        store={store}
+        tab={tab}
+        style={styles.link}
+        accessibilityLabel={[store.name, `${store.street}, ${store.city}`, status.label, distance]
+          .filter(Boolean)
+          .join(', ')}
+      >
         <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={[store.name, `${store.street}, ${store.city}`, status.label, distance]
-            .filter(Boolean)
-            .join(', ')}
+          accessible={false}
           android_ripple={{ color: colors.pressed }}
           style={styles.main}
         >
@@ -88,6 +92,7 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.lg,
     paddingRight: spacing.xs,
   },
+  link: { flex: 1 },
   main: {
     flex: 1,
     flexDirection: 'row',

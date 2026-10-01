@@ -65,13 +65,15 @@ export function StoresHeader({
   return (
     <View style={styles.container}>
       <View style={{ minHeight: HERO_HEIGHT + insets.top }}>
-        <Image
-          source={heroPhoto}
-          style={StyleSheet.absoluteFill}
-          contentFit="cover"
-          accessible={false}
-        />
-        <View style={styles.heroScrim} />
+        <Reanimated.View style={[StyleSheet.absoluteFill, heroStretchStyle]}>
+          <Image
+            source={heroPhoto}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+            accessible={false}
+          />
+          <View style={styles.heroScrim} />
+        </Reanimated.View>
         <View style={[styles.heroContent, { paddingTop: insets.top + spacing.sm }]}>
           <View style={styles.topBar}>
             <View accessible accessibilityRole="header">

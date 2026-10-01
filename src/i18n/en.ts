@@ -109,6 +109,8 @@ export const en: Translations = {
     nearbyCount_one: '{{count}} store within 30 km',
     nearbyCount_other: '{{count}} stores within 30 km',
     noLocation: 'Turn on location to see the way from where you are.',
+    openDetail: 'See the store',
+    tapMarker: 'Tap a pin to see the store.',
     openInMaps: 'Get directions',
     openInAppleMaps: 'Directions in Maps',
   },

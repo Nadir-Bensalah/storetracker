@@ -37,10 +37,14 @@ export const NearbyCard = memo(function NearbyCard({
       entering={FadeIn.duration(260)}
       style={[styles.card, { width, backgroundColor: colors.skeleton }]}
     >
-      <StoreLink store={store} tab={tab}>
+      <StoreLink
+        store={store}
+        tab={tab}
+        style={styles.fill}
+        accessibilityLabel={[store.name, status.label, distance].filter(Boolean).join(', ')}
+      >
         <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={[store.name, status.label, distance].filter(Boolean).join(', ')}
+          accessible={false}
           android_ripple={{ color: 'rgba(255,255,255,0.15)', foreground: true }}
           style={styles.fill}
         >

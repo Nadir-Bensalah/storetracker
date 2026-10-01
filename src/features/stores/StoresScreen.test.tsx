@@ -49,7 +49,7 @@ describe('StoresScreen', () => {
 
   it('opens the detail of the pressed store', async () => {
     await renderWithStore(<StoresScreen />);
-    await fireEvent.press(await screen.findByRole('button', { name: /^Fauvel Abbesses/ }));
+    await fireEvent.press(await screen.findByText('Fauvel Abbesses'));
     await waitFor(() => expect(router.push).toHaveBeenCalledWith('/stores/21'));
   });
 

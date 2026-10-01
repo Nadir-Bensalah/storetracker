@@ -1,7 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/query';
 import Constants from 'expo-constants';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -46,6 +46,7 @@ export function StoreMapScreen() {
   const mapRef = useRef<MapView>(null);
   const origin = useAppSelector((state) => state.location.coordinates);
   const nearbyMode = id === 'nearby';
+  const [selected, setSelected] = useState<Store | null>(null);
 
   const favorite = useAppSelector((state) => selectFavorite(state, id));
   const listed = useAppSelector((state) => selectListedStore(state, id));
@@ -69,8 +70,14 @@ export function StoreMapScreen() {
   }, [stores.map((item) => item.id).join(','), origin]);
 
   const title = nearbyMode ? t('stores.nearby') : (store?.name ?? '');
+  const openDetail = (item: Store) => {
+    router.back();
+    // The detail is pushed in the tab's stack once this modal has started closing.
+    setTimeout(() => router.push(`/stores/${item.id}`), 50);
+  };
+  const focused = nearbyMode ? selected : store;
+  const focusedDistance = focused && origin ? distanceInMeters(origin, focused.coordinates) : null;
   const center = store?.coordinates ?? origin ?? { latitude: 48.8566, longitude: 2.3522 };
-  const distance = store && origin ? distanceInMeters(origin, store.coordinates) : null;
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
@@ -108,7 +115,10 @@ export function StoreMapScreen() {
               key={item.id}
               coordinate={item.coordinates}
               title={item.name}
+              description={`${item.street}, ${item.city}`}
               pinColor={colors.accent}
+              onPress={() => setSelected(item)}
+              onCalloutPress={() => openDetail(item)}
             />
           ))}
           {store && origin ? (
@@ -133,36 +143,29 @@ export function StoreMapScreen() {
         accessible
         accessibilityRole="summary"
       >
-        {nearbyMode ? (
+        {focused ? (
           <>
-            <Text variant="headline">{t('stores.nearby')}</Text>
+            <Text variant="headline">{focused.name}</Text>
             <Text variant="subhead" color="textSecondary">
-              {t('map.nearbyCount', { count: stores.length })}
+              {`${focused.street}, ${focused.postalCode} ${focused.city}`}
             </Text>
-          </>
-        ) : store ? (
-          <>
-            <Text variant="headline">{store.name}</Text>
-            <Text variant="subhead" color="textSecondary">
-              {`${store.street}, ${store.postalCode} ${store.city}`}
-            </Text>
-            {distance !== null ? (
+            {focusedDistance !== null ? (
               <View style={styles.estimates}>
                 <Text variant="subhead">
                   {t('map.driving', {
-                    distance: formatDistance(distance * DETOUR_FACTOR, locale),
+                    distance: formatDistance(focusedDistance * DETOUR_FACTOR, locale),
                     minutes: Math.max(
                       1,
-                      Math.round((distance * DETOUR_FACTOR) / DRIVING_METERS_PER_MINUTE),
+                      Math.round((focusedDistance * DETOUR_FACTOR) / DRIVING_METERS_PER_MINUTE),
                     ),
                   })}
                 </Text>
                 <Text variant="subhead" color="textSecondary">
                   {t('map.estimate', {
-                    distance: formatDistance(distance, locale),
+                    distance: formatDistance(focusedDistance, locale),
                     minutes: Math.max(
                       1,
-                      Math.round((distance * DETOUR_FACTOR) / WALKING_METERS_PER_MINUTE),
+                      Math.round((focusedDistance * DETOUR_FACTOR) / WALKING_METERS_PER_MINUTE),
                     ),
                   })}
                 </Text>
@@ -172,13 +175,37 @@ export function StoreMapScreen() {
                 {t('map.noLocation')}
               </Text>
             )}
-            <Button
-              title={t(Platform.OS === 'ios' ? 'map.openInAppleMaps' : 'map.openInMaps')}
-              icon="directions"
-              onPress={() => Linking.openURL(directionsUrl(store))}
-            />
+            <View style={styles.actions}>
+              {nearbyMode ? (
+                <View style={styles.action}>
+                  <Button
+                    title={t('map.openDetail')}
+                    icon="storefront"
+                    variant="secondary"
+                    onPress={() => openDetail(focused)}
+                  />
+                </View>
+              ) : null}
+              <View style={styles.action}>
+                <Button
+                  title={t(Platform.OS === 'ios' ? 'map.openInAppleMaps' : 'map.openInMaps')}
+                  icon="directions"
+                  onPress={() => Linking.openURL(directionsUrl(focused))}
+                />
+              </View>
+            </View>
           </>
-        ) : null}
+        ) : (
+          <>
+            <Text variant="headline">{t('stores.nearby')}</Text>
+            <Text variant="subhead" color="textSecondary">
+              {t('map.nearbyCount', { count: stores.length })}
+            </Text>
+            <Text variant="footnote" color="textTertiary">
+              {t('map.tapMarker')}
+            </Text>
+          </>
+        )}
       </GlassPanel>
     </View>
   );
@@ -203,4 +230,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   estimates: { gap: spacing.xxs, marginBottom: spacing.sm },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
+  action: { flexGrow: 1, flexBasis: 140 },
 });

@@ -111,6 +111,8 @@ export const fr = {
     nearbyCount_one: '{{count}} magasin à moins de 30 km',
     nearbyCount_other: '{{count}} magasins à moins de 30 km',
     noLocation: 'Activez la localisation pour voir le trajet depuis votre position.',
+    openDetail: 'Voir la fiche',
+    tapMarker: 'Touchez un repère pour voir le magasin.',
     openInMaps: 'Ouvrir l’itinéraire',
     openInAppleMaps: 'Itinéraire dans Plans',
   },
