@@ -161,7 +161,7 @@ Détail des tests Jest :
 | Onglets | `UITabBarController`, Liquid Glass sur iOS 26+ | Barre de navigation Material 3 |
 | Piles | `UINavigationController`, retour par glissement | Pile native, retour système et prédictif |
 | Recherche | `UISearchController` dans l'en-tête de l'écran de recherche | `SearchView` natif de la pile |
-| Lignes et cartes | Appui = haptique et navigation ; appui long = aperçu natif de la fiche avec menu contextuel (appeler, itinéraire, favori) | Appui = haptique et navigation |
+| Lignes et cartes | Appui = retour haptique de sélection, puis la fiche dans la pile de l'onglet | Idem, avec l'effet ripple |
 | Réglages | Feuille native (page sheet) avec sa propre pile | Écran modal plein écran avec sa pile |
 | Cartes plein écran | Carte sous un en-tête transparent, panneau Liquid Glass (iOS 26) ou flouté collé en bas, estimations en voiture et à pied | Écran modal, panneau opaque |
 | Liens externes | `SFSafariViewController` | Chrome Custom Tabs |
@@ -180,7 +180,7 @@ Il n'y a pas de module Swift ou Kotlin : aucun besoin du produit ne le justifiai
 Sobres et fonctionnelles, toutes désactivées quand « Réduire les animations » est actif :
 - transitions de pile et de feuille natives ;
 - photo d'en-tête qui s'étire quand on tire la page (Reanimated, sur le thread UI) ;
-- transition native vers l'écran de recherche, aperçu natif des fiches au toucher long (iOS) ;
+- transition native vers l'écran de recherche ;
 - apparition en fondu des lignes et des cartes, réorganisation animée quand un favori est retiré ;
 - cœur : effet de rebond du SF Symbol sur iOS, petite pulsation sur Android ;
 - dépliage des horaires.

@@ -32,7 +32,8 @@ Chaque décision suit le même format : le problème, le choix, pourquoi, les al
 - `src/app/(tabs)/_layout.tsx` : `NativeTabs` d'Expo Router, c'est-à-dire `UITabBarController` sur iOS et la barre de navigation Material 3 sur Android.
 - `src/app/(tabs)/stores/_layout.tsx` et `favorites/_layout.tsx` : une pile native par onglet. Le détail est poussé dans la pile de l'onglet courant, la barre d'onglets reste visible.
 - La recherche est un écran poussé dont la barre de recherche est celle de l'en-tête natif (`headerSearchBarOptions`) : la transition et le clavier sont ceux du système, les résultats vivent dans la liste en dessous.
-- Les lignes et cartes sont des `Link` d'Expo Router : sur iOS, un appui long affiche l'aperçu natif de la fiche (`Link.Preview`) et un menu contextuel (`Link.Menu`). La fiche se rend depuis le cache des listes (`selectListedStore`), donc l'aperçu est instantané.
+- La fiche se rend d'abord depuis le cache des listes (`selectListedStore`) : pas de squelette pour une donnée déjà à l'écran.
+- **Essayé puis retiré : l'aperçu au toucher long** (`Link.Preview` et `Link.Menu` d'Expo Router). Deux problèmes réels sur appareil : le `Slot` de `Link` aplatit le style du pressable et jette les styles fonction, et le déclencheur natif de l'aperçu retire la ligne de l'arbre d'accessibilité (VoiceOver ne la lit plus, l'automatisation ne la trouve plus). Un aperçu ne vaut pas une ligne muette pour VoiceOver ; les lignes gardent un `Pressable` ordinaire avec retour haptique.
 - Les réglages sont présentés en modal (page sheet sur iOS, plein écran sur Android), avec leur propre pile native pour les pages « À propos ».
 - La carte d'un magasin s'ouvre de la même façon, en plein écran.
 
