@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo } from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, LogBox } from 'react-native';
 import { Provider } from 'react-redux';
 
 import i18n, { initI18n } from '@/i18n';
@@ -11,6 +11,9 @@ import { store } from '@/store';
 import { startAppListeners } from '@/store/appListeners';
 import { useAppSelector } from '@/store/hooks';
 import { useTheme } from '@/theme/useTheme';
+
+// Informational only: reduced motion is respected on purpose (see README).
+LogBox.ignoreLogs(['[Reanimated] Reduced motion setting is enabled']);
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({ fade: true, duration: 200 });
