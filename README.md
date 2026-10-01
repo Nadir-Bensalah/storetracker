@@ -57,7 +57,7 @@ La même commande tourne en CI sur chaque push.
 | Exigence | Où |
 |---|---|
 | Liste de 50 magasins minimum, API ou mock | 120 magasins, API simulée : `src/features/stores/data`, `src/features/stores/api` |
-| Filtrage par nom | Champ de recherche de l'accueil, anti-rebond, recherche côté serveur, insensible aux accents |
+| Filtrage par nom | Écran de recherche avec la barre native de l'en-tête, anti-rebond, recherche côté serveur, insensible aux accents : `SearchScreen.tsx` |
 | Infinite scroll | Pages de 20 : `StoresScreen.tsx` (`onEndReached`), `storesApi.ts` (`infiniteQuery`) |
 | Détail : MapView | `src/features/map/StoreMap.tsx` |
 | Détail : horaires | `OpeningHoursRow.tsx` : aujourd'hui, puis la semaine dépliable |
@@ -160,8 +160,10 @@ Détail des tests Jest :
 |---|---|---|
 | Onglets | `UITabBarController`, Liquid Glass sur iOS 26+ | Barre de navigation Material 3 |
 | Piles | `UINavigationController`, retour par glissement | Pile native, retour système et prédictif |
+| Recherche | `UISearchController` dans l'en-tête de l'écran de recherche | `SearchView` natif de la pile |
+| Lignes et cartes | Appui = haptique et navigation ; appui long = aperçu natif de la fiche avec menu contextuel (appeler, itinéraire, favori) | Appui = haptique et navigation |
 | Réglages | Feuille native (page sheet) avec sa propre pile | Écran modal plein écran avec sa pile |
-| Carte du magasin | Feuille plein écran, tracé depuis votre position | Écran modal, même contenu |
+| Cartes plein écran | Carte sous un en-tête transparent, panneau Liquid Glass (iOS 26) ou flouté collé en bas, estimations en voiture et à pied | Écran modal, panneau opaque |
 | Liens externes | `SFSafariViewController` | Chrome Custom Tabs |
 | Choix uniques | Coche, comme dans Réglages | Boutons radio |
 | Retour tactile | Haptique d'impact | Haptique système (`performHapticFeedback`) et ripple |
@@ -177,7 +179,8 @@ Il n'y a pas de module Swift ou Kotlin : aucun besoin du produit ne le justifiai
 
 Sobres et fonctionnelles, toutes désactivées quand « Réduire les animations » est actif :
 - transitions de pile et de feuille natives ;
-- photo d'en-tête qui s'étire quand on tire la page (iOS ; Android 12+ applique son propre étirement) ;
+- photo d'en-tête qui s'étire quand on tire la page (Reanimated, sur le thread UI) ;
+- transition native vers l'écran de recherche, aperçu natif des fiches au toucher long (iOS) ;
 - apparition en fondu des lignes et des cartes, réorganisation animée quand un favori est retiré ;
 - cœur : effet de rebond du SF Symbol sur iOS, petite pulsation sur Android ;
 - dépliage des horaires.

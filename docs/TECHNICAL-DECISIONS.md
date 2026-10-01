@@ -31,6 +31,8 @@ Chaque décision suit le même format : le problème, le choix, pourquoi, les al
 **Choix.**
 - `src/app/(tabs)/_layout.tsx` : `NativeTabs` d'Expo Router, c'est-à-dire `UITabBarController` sur iOS et la barre de navigation Material 3 sur Android.
 - `src/app/(tabs)/stores/_layout.tsx` et `favorites/_layout.tsx` : une pile native par onglet. Le détail est poussé dans la pile de l'onglet courant, la barre d'onglets reste visible.
+- La recherche est un écran poussé dont la barre de recherche est celle de l'en-tête natif (`headerSearchBarOptions`) : la transition et le clavier sont ceux du système, les résultats vivent dans la liste en dessous.
+- Les lignes et cartes sont des `Link` d'Expo Router : sur iOS, un appui long affiche l'aperçu natif de la fiche (`Link.Preview`) et un menu contextuel (`Link.Menu`). La fiche se rend depuis le cache des listes (`selectListedStore`), donc l'aperçu est instantané.
 - Les réglages sont présentés en modal (page sheet sur iOS, plein écran sur Android), avec leur propre pile native pour les pages « À propos ».
 - La carte d'un magasin s'ouvre de la même façon, en plein écran.
 
@@ -169,7 +171,11 @@ Un Context échoue au point 5 (tous les consommateurs sont re-rendus). Des hooks
 
 **Choix.** Les transitions de pile et de feuille restent natives. Le reste est volontairement limité : apparition en fondu des lignes et des cartes, réorganisation quand un favori est retiré (Reanimated, sur le thread UI), rebond du SF Symbol du cœur sur iOS et pulsation équivalente sur Android, photo d'en-tête qui s'étire au rebond iOS (`Animated` avec le driver natif : aucun calcul JS par image).
 
-**Pourquoi Reanimated.** Les animations d'entrée, de sortie et de mise en page de liste n'existent pas dans `Animated`. Reanimated était de toute façon déjà embarqué par Expo Router.
+**Pourquoi Reanimated.** Les animations d'entrée, de sortie et de mise en page de liste n'existent pas dans `Animated`, et l'étirement de l'en-tête se calcule dans un `useAnimatedScrollHandler` sur le thread UI. Reanimated était de toute façon déjà embarqué par Expo Router.
+
+**Le panneau de la carte.** `GlassView` d'`expo-glass-effect` quand le système fournit Liquid Glass (iOS 26+), `BlurView` sur les iOS antérieurs, surface opaque sur Android où le flou coûte plus qu'il n'apporte. Aucun verre n'est imité.
+
+**Estimations de trajet.** Sans service d'itinéraire, la distance en voiture et les durées sont des estimations à partir de la ligne droite (détour de 30 %, 25 km/h en ville, 80 m par minute à pied), et affichées comme telles ; l'itinéraire réel est délégué à Plans ou Google Maps.
 
 **Accessibilité.** « Réduire les animations » coupe tout : Reanimated le respecte par défaut, les squelettes et le dépliage des horaires le vérifient explicitement.
 
