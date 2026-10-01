@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { memo } from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { FavoriteButton } from '@/features/favorites/FavoriteButton';
@@ -42,10 +42,7 @@ export const NearbyCard = memo(function NearbyCard({
           accessibilityRole="button"
           accessibilityLabel={[store.name, status.label, distance].filter(Boolean).join(', ')}
           android_ripple={{ color: 'rgba(255,255,255,0.15)', foreground: true }}
-          style={({ pressed }) => [
-            styles.fill,
-            pressed && Platform.OS === 'ios' && { opacity: 0.85 },
-          ]}
+          style={styles.fill}
         >
           {photo ? (
             <Image
