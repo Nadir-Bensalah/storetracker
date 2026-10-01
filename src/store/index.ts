@@ -22,7 +22,11 @@ export function createStore(preloadedState?: Partial<RootState>) {
     reducer: rootReducer,
     preloadedState,
     middleware: (getDefault) =>
-      getDefault().prepend(persistenceMiddleware.middleware).concat(storesApi.middleware),
+      // The dev-only immutability check walks the whole RTK Query cache; 120
+      // stores make it slower than its default 32 ms budget.
+      getDefault({ immutableCheck: { warnAfter: 500 } })
+        .prepend(persistenceMiddleware.middleware)
+        .concat(storesApi.middleware),
   });
 }
 

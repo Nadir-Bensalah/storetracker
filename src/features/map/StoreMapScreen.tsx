@@ -138,11 +138,7 @@ export function StoreMapScreen() {
         </View>
       )}
 
-      <GlassPanel
-        style={[styles.panel, { paddingBottom: insets.bottom + spacing.lg }]}
-        accessible
-        accessibilityRole="summary"
-      >
+      <GlassPanel style={[styles.panel, { paddingBottom: insets.bottom + spacing.lg }]}>
         {focused ? (
           <>
             <Text variant="headline">{focused.name}</Text>
