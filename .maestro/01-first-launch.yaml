@@ -1,0 +1,25 @@
+# Cold start, onboarding, language choice, location permission, then Home.
+appId: app.capmedia.storetracker
+name: First launch
+---
+- launchApp:
+    clearState: true
+    permissions:
+      location: unset
+- extendedWaitUntil:
+    visible: 'StoreTracker.*'
+    timeout: 30000
+- tapOn: 'Français.*'
+- assertVisible: 'Bienvenue'
+- tapOn: 'English.*'
+- assertVisible: 'Welcome'
+- tapOn: 'Continue'
+- assertVisible: 'Allow your location'
+- tapOn: 'Allow location'
+# The real system prompt, whose wording depends on the OS and its language.
+- tapOn:
+    text: '(Allow While Using App|Autoriser lorsque l’app est active|While using the app|Lorsque vous utilisez l’appli)'
+- assertVisible: 'Find your stores'
+- scrollUntilVisible:
+    element: 'All stores'
+    direction: DOWN

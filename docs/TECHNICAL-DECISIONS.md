@@ -31,7 +31,8 @@ Chaque décision suit le même format : le problème, le choix, pourquoi, les al
 **Choix.**
 - `src/app/(tabs)/_layout.tsx` : `NativeTabs` d'Expo Router, c'est-à-dire `UITabBarController` sur iOS et la barre de navigation Material 3 sur Android.
 - `src/app/(tabs)/stores/_layout.tsx` et `favorites/_layout.tsx` : une pile native par onglet. Le détail est poussé dans la pile de l'onglet courant, la barre d'onglets reste visible.
-- Les réglages sont une feuille native (`formSheet`) au-dessus des onglets.
+- Les réglages sont présentés en modal (page sheet sur iOS, plein écran sur Android), avec leur propre pile native pour les pages « À propos ».
+- La carte d'un magasin s'ouvre de la même façon, en plein écran.
 
 **Pourquoi.** Sur iOS 26 et plus, la barre d'onglets prend Liquid Glass sans une ligne de code. Sur Android, elle suit Material 3. Une barre dessinée en `View` ne fait ni l'un ni l'autre et vieillit à chaque version d'OS.
 
@@ -164,7 +165,17 @@ Un Context échoue au point 5 (tous les consommateurs sont re-rendus). Des hooks
 
 ---
 
-## 13. Pas de module Swift ou Kotlin
+## 13. Animations
+
+**Choix.** Les transitions de pile et de feuille restent natives. Le reste est volontairement limité : apparition en fondu des lignes et des cartes, réorganisation quand un favori est retiré (Reanimated, sur le thread UI), rebond du SF Symbol du cœur sur iOS et pulsation équivalente sur Android, photo d'en-tête qui s'étire au rebond iOS (`Animated` avec le driver natif : aucun calcul JS par image).
+
+**Pourquoi Reanimated.** Les animations d'entrée, de sortie et de mise en page de liste n'existent pas dans `Animated`. Reanimated était de toute façon déjà embarqué par Expo Router.
+
+**Accessibilité.** « Réduire les animations » coupe tout : Reanimated le respecte par défaut, les squelettes et le dépliage des horaires le vérifient explicitement.
+
+---
+
+## 14. Pas de module Swift ou Kotlin
 
 Aucun besoin du produit ne le justifiait : tout ce qu'il fallait existe en modules maintenus. J'en écrirais un, avec l'Expo Modules API, pour :
 - intégrer un SDK de guidage en magasin (positionnement intérieur par balises), qui n'existe qu'en natif ;

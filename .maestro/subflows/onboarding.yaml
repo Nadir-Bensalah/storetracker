@@ -1,0 +1,28 @@
+# Fresh install with the English UI. LOCATION is "allow" or "deny".
+appId: app.capmedia.storetracker
+---
+- launchApp:
+    clearState: true
+    permissions:
+      location: unset
+- extendedWaitUntil:
+    visible: 'English.*'
+    timeout: 30000
+- tapOn: 'English.*'
+- tapOn: 'Continue'
+- assertVisible: 'Allow your location'
+- runFlow:
+    when:
+      true: ${LOCATION == 'allow'}
+    commands:
+      - tapOn: 'Allow location'
+      # The real system prompt, whose wording depends on the OS and its language.
+      - tapOn:
+          text: '(Allow While Using App|Autoriser lorsque l’app est active|While using the app|Lorsque vous utilisez l’appli)'
+          optional: true
+- runFlow:
+    when:
+      true: ${LOCATION == 'deny'}
+    commands:
+      - tapOn: 'Not now'
+- assertVisible: 'Find your stores'

@@ -68,7 +68,7 @@ La même commande tourne en CI sur chaque push.
 | TypeScript strict | `strict` et `noUncheckedIndexedAccess`, aucun `any` |
 | Performance, mémoïsation, FlatList | [Décision 7](docs/TECHNICAL-DECISIONS.md#7-la-flatlist-de-laccueil) |
 | États de chargement et d'erreur | Squelettes, erreur et réessai, liste vide, hors ligne, fin de liste |
-| Tests unitaires, 3 composants minimum | 9 suites pour l'app, dont 6 sur des composants et écrans |
+| Tests unitaires, 3 composants minimum | 10 suites pour l'app, dont 6 sur des composants et écrans, plus 6 parcours Maestro |
 | Accessibilité, retour visuel, responsive | Sections ci-dessous |
 | README, installation, variables, choix techniques | Ce fichier et [docs/TECHNICAL-DECISIONS.md](docs/TECHNICAL-DECISIONS.md) |
 
@@ -84,6 +84,7 @@ src/
     map/          carte et style sombre Android
     settings/     préférences et écran de réglages
     onboarding/   accueil en deux étapes
+    about/        à propos du développeur (réglages)
   store/          store Redux, persistance MMKV, écouteurs réseau et premier plan
   theme/          tokens clair et sombre, typographie
   i18n/           français, anglais, formatage
@@ -122,9 +123,23 @@ Volontairement écartés : un tableau de bord d'indicateurs, un parcours de rés
 
 ## Tests
 
+Trois niveaux, chacun pour ce qu'il sait vérifier.
+
+| Niveau | Outil | Ce qu'il couvre | Lancer |
+|---|---|---|---|
+| Logique et composants | Jest, React Native Testing Library | Règles métier, écrans, états | `npm test` |
+| Parcours critiques | [Maestro](https://maestro.dev), 6 parcours dans `.maestro/` | Premier lancement, recherche, favoris et redémarrage, erreur et réessai, réglages persistés, pagination | `maestro test .maestro` |
+| Recette manuelle | [docs/QA-CHECKLIST.md](docs/QA-CHECKLIST.md) | Rendu natif, permissions, cartes, gestes, accessibilité réelle, iOS et Android | à la main |
+
+Maestro s'exécute sur un build de debug déjà installé (`npx expo run:ios` ou `run:android`), simulateur ou émulateur démarré. Le parcours « erreur » utilise l'interrupteur de développement « Simuler une panne de l'API » des réglages, absent des builds de production.
+
 ```sh
-npm test
+curl -fsSL "https://get.maestro.mobile.dev" | bash   # une fois
+maestro test .maestro                               # les 6 parcours
+maestro test .maestro/03-favorites-persistence.yaml # un seul
 ```
+
+Détail des tests Jest :
 
 - **Logique** : horaires (pause déjeuner, minute de fermeture, jours fermés, fuseau horaire), distances, API simulée (pagination sans doublon, recherche, tri, hors ligne), favoris et leur persistance.
 - **Écrans** : accueil (squelette, pagination, recherche vide, erreur puis réessai, navigation), détail (chargement, horaires dépliables, instantané hors ligne, magasin introuvable), favoris, réglages, ligne de magasin.
@@ -145,7 +160,9 @@ npm test
 |---|---|---|
 | Onglets | `UITabBarController`, Liquid Glass sur iOS 26+ | Barre de navigation Material 3 |
 | Piles | `UINavigationController`, retour par glissement | Pile native, retour système et prédictif |
-| Réglages | Feuille native avec poignée et crans | Feuille Material |
+| Réglages | Feuille native (page sheet) avec sa propre pile | Écran modal plein écran avec sa pile |
+| Carte du magasin | Feuille plein écran, tracé depuis votre position | Écran modal, même contenu |
+| Liens externes | `SFSafariViewController` | Chrome Custom Tabs |
 | Choix uniques | Coche, comme dans Réglages | Boutons radio |
 | Retour tactile | Haptique d'impact | Haptique système (`performHapticFeedback`) et ripple |
 | Carte | Apple Plans | Google Maps, style sombre fourni |
@@ -154,13 +171,26 @@ npm test
 
 Aucun composant système n'est imité en JavaScript.
 
-Il n'y a pas de module Swift ou Kotlin : aucun besoin du produit ne le justifiait. La [décision 13](docs/TECHNICAL-DECISIONS.md#13-pas-de-module-swift-ou-kotlin) cite deux cas où j'en écrirais un.
+Il n'y a pas de module Swift ou Kotlin : aucun besoin du produit ne le justifiait. La [décision 14](docs/TECHNICAL-DECISIONS.md#14-pas-de-module-swift-ou-kotlin) cite deux cas où j'en écrirais un.
+
+## Animations
+
+Sobres et fonctionnelles, toutes désactivées quand « Réduire les animations » est actif :
+- transitions de pile et de feuille natives ;
+- photo d'en-tête qui s'étire quand on tire la page (iOS ; Android 12+ applique son propre étirement) ;
+- apparition en fondu des lignes et des cartes, réorganisation animée quand un favori est retiré ;
+- cœur : effet de rebond du SF Symbol sur iOS, petite pulsation sur Android ;
+- dépliage des horaires.
 
 ## Développement assisté par IA
 
 J'ai développé ce projet avec Claude Code, comme je travaille au quotidien. L'outil a accéléré l'exploration, l'écriture du code et des tests et la rédaction. Les choix d'architecture et de produit, la relecture de chaque changement et la vérification sur iOS et Android sont de mon fait.
 
 Je considère que savoir utiliser ces outils fait partie du métier aujourd'hui, à une condition : comprendre et assumer chaque ligne livrée. Je peux expliquer n'importe quelle partie de ce dépôt.
+
+## Auteur
+
+Nadir Ben Salah, développeur React Native iOS et Android.
 
 ## Crédits
 

@@ -1,0 +1,22 @@
+# Add a favorite from the detail, find it in Favorites, and again after a restart.
+appId: app.capmedia.storetracker
+name: Favorites and persistence
+---
+- runFlow:
+    file: subflows/onboarding.yaml
+    env:
+      LOCATION: deny
+- tapOn: 'Fauvel Abbesses, .*'
+- assertVisible: '9 rue des Abbesses, 75018 Paris'
+- tapOn: 'Add to favorites'
+- assertVisible: 'Remove from favorites'
+- tapOn: 'Favorites'
+- assertVisible: 'Fauvel Abbesses, .*'
+- assertVisible: '1 saved store'
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Favorites'
+    timeout: 30000
+- tapOn: 'Favorites'
+- assertVisible: 'Fauvel Abbesses, .*'

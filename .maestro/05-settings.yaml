@@ -1,0 +1,57 @@
+# Language and appearance change, and survive a restart.
+appId: app.capmedia.storetracker
+name: Settings
+---
+- runFlow:
+    file: subflows/onboarding.yaml
+    env:
+      LOCATION: deny
+- tapOn: 'Settings'
+- tapOn: 'Français.*'
+- assertVisible: 'Paramètres'
+- tapOn: 'Sombre.*'
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: 'Sombre, (sélectionné|selected)'
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible:
+          text: 'Sombre'
+          checked: true
+- tapOn: 'Fermer'
+- assertVisible: 'Trouvez vos magasins'
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Trouvez vos magasins'
+    timeout: 30000
+- assertVisible: 'Trouvez vos magasins'
+- tapOn: 'Paramètres'
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: 'Sombre, (sélectionné|selected)'
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible:
+          text: 'Sombre'
+          checked: true
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: 'Français, (sélectionné|selected)'
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible:
+          text: 'Français'
+          checked: true

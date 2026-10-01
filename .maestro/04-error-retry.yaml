@@ -1,0 +1,25 @@
+# Uses the development switch that makes the mock API fail (debug builds only).
+appId: app.capmedia.storetracker
+name: Error and retry
+---
+- runFlow:
+    file: subflows/onboarding.yaml
+    env:
+      LOCATION: deny
+- tapOn: 'Settings'
+- scrollUntilVisible:
+    element: 'Simulate an API failure'
+    direction: DOWN
+- tapOn: 'Simulate an API failure'
+- tapOn: 'Close'
+- tapOn: 'Search a store'
+- inputText: 'Rambert'
+- assertVisible: 'Couldn’t load the stores'
+- tapOn: 'Settings'
+- scrollUntilVisible:
+    element: 'Simulate an API failure'
+    direction: DOWN
+- tapOn: 'Simulate an API failure'
+- tapOn: 'Close'
+- tapOn: 'Try again'
+- assertVisible: 'Rambert Annecy, .*'

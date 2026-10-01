@@ -1,0 +1,19 @@
+# Search a brand, check the results, open a store.
+appId: app.capmedia.storetracker
+name: Search
+---
+- runFlow:
+    file: subflows/onboarding.yaml
+    env:
+      LOCATION: deny
+- tapOn: 'Search a store'
+- inputText: 'Gautrand Lices'
+- assertVisible: 'Results'
+- assertVisible: '1 store'
+- hideKeyboard
+- tapOn: 'Gautrand Lices, .*'
+- assertVisible: 'Gautrand Lices'
+- assertVisible: 'Place des Lices, 35000 Rennes'
+- scrollUntilVisible:
+    element: 'Opening hours.*'
+    direction: DOWN

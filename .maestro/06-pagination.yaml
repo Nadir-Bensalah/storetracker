@@ -1,0 +1,15 @@
+# Without location the list is alphabetical: Hollier stores only arrive with
+# the third page of 20, so reaching one proves infinite scroll works.
+appId: app.capmedia.storetracker
+name: Pagination
+---
+- runFlow:
+    file: subflows/onboarding.yaml
+    env:
+      LOCATION: deny
+- assertVisible: '120 stores'
+- assertNotVisible: 'Hollier Bercy, .*'
+- scrollUntilVisible:
+    element: 'Hollier Bercy, .*'
+    direction: DOWN
+    timeout: 30000
