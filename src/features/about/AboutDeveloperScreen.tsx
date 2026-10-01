@@ -58,7 +58,12 @@ export function AboutDeveloperScreen() {
 
       <Group>
         <ListRow first title={t('about.publishedApps')} value={String(publishedAppsCount)} />
-        <ListRow title={t('about.stackLabel')} value={t('about.stack')} />
+        <View style={[styles.stacked, { borderTopColor: colors.separator }]}>
+          <Text variant="footnote" color="textSecondary">
+            {t('about.stackLabel')}
+          </Text>
+          <Text>{t('about.stack')}</Text>
+        </View>
       </Group>
 
       <Text variant="subhead" color="textSecondary">
@@ -81,6 +86,12 @@ export function AboutDeveloperScreen() {
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.xl },
   identity: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
+  stacked: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.xxs,
+  },
   identityText: { flex: 1, gap: spacing.xxs },
   monogram: {
     width: 64,
